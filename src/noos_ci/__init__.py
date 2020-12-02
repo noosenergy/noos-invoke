@@ -6,12 +6,12 @@ from invoke import Collection, Program
 from . import dev, docker, git, helm, py
 
 
-namespace = Collection()
-namespace.add_collection(dev)
-namespace.add_collection(docker)
-namespace.add_collection(git)
-namespace.add_collection(helm)
-namespace.add_collection(py)
+ns = Collection()
+ns.add_collection(dev)
+ns.add_collection(docker.ns)
+ns.add_collection(git.ns)
+ns.add_collection(helm.ns)
+ns.add_collection(py.ns)
 
 
-program = Program(namespace=namespace, version="0.0.1a0")
+main = Program(namespace=ns, version="0.0.1a0")
