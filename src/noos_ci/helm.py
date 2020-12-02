@@ -1,38 +1,49 @@
 import os
 
-from invoke import task
+from invoke import Collection, task
 
 from . import utils
 
 
-CHARTMUSEUM_REPO = "noos-private"
-CHARTMUSEUM_URL = "https://charts.noos.energy"
-CHARTMUSEUM_TOKEN = os.getenv("CHARTMUSEUM_TOKEN")
-CHARTMUSEUM_PLUGINS = ["https://github.com/chartmuseum/helm-push.git"]
+CONFIG = {
+    "helm": {
+        "repo": "noos-private",
+        "url": "https://charts.noos.energy",
+        "user": "noosenergy",
+        "token": os.getenv("CHARTMUSEUM_TOKEN"),
+        "plugins": ["https://github.com/chartmuseum/helm-push.git"],
+        "chart": "./helm/chart",
+        "values": "./local/helm-values.yaml",
+    }
+}
 
 
 # Helm deployment workflow:
 
 
 @task
-def login(
-    ctx, repo=CHARTMUSEUM_REPO, url=CHARTMUSEUM_URL, user="noosenergy", token=CHARTMUSEUM_TOKEN
-):
+def login(ctx, repo=None, url=None, user=None, token=None):
     """Login to Helm remote registry (Chart Museum)."""
+    repo = repo or ctx.helm.repo
+    url = url or ctx.helm.url
+    user = user or ctx.helm.user
+    token = token or ctx.helm.token
     assert token is not None, "Missing remote Helm registry token."
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}", pty=True)
 
 
 @task
-def install(ctx, plugins=CHARTMUSEUM_PLUGINS):
+def install(ctx, plugins=None):
     """Provision local Helm client (Chart Museum Plugin)."""
+    plugins = plugins or ctx.helm.plugins
     for plugin in plugins:
         ctx.run(f"helm plugin install {plugin}", pty=True)
 
 
 @task
-def lint(ctx, chart="./helm/chart"):
+def lint(ctx, chart=None):
     """Check compliance of Helm charts / values."""
+    chart = chart or ctx.helm.chart
     utils.check_path(chart)
     ctx.run(f"helm lint {chart}", pty=True)
 
@@ -40,14 +51,16 @@ def lint(ctx, chart="./helm/chart"):
 @task(help={"dry-run": "Whether to render the Helm manifest first"})
 def test(
     ctx,
-    chart="./helm/chart",
-    values="./local/helm-values.yaml",
+    chart=None,
+    values=None,
     release="test",
     namespace="default",
     context="minikube",
     dry_run=False,
 ):
     """Test local deployment in Minikube."""
+    chart = chart or ctx.helm.chart
+    values = chart or ctx.helm.values
     utils.check_path(chart)
     utils.check_path(values)
     cmd = f"helm install {release} {chart} --values {values} "
@@ -58,7 +71,18 @@ def test(
 
 
 @task
-def push(ctx, chart="./helm/chart", repo=CHARTMUSEUM_REPO):
+def push(ctx, chart=None, repo=None):
     """Push Helm chart to a remote registry."""
+    chart = chart or ctx.helm.chart
+    repo = repo or ctx.helm.repo
     utils.check_path(chart)
     ctx.run(f"helm push {chart} {repo}", pty=True)
+
+
+ns = Collection("helm")
+ns.configure(CONFIG)
+ns.add_task(login)
+ns.add_task(install)
+ns.add_task(lint)
+ns.add_task(test)
+ns.add_task(push)
