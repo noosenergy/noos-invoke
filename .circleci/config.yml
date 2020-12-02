@@ -1,0 +1,123 @@
+# https://circleci.com/docs/2.1/language-python/
+version: 2.1
+
+# ------------------
+# Reusable executors
+# ------------------
+
+executors:
+
+  standard:
+    docker:
+      - image: circleci/python:3.7.6
+        environment:
+          POETRY_VIRTUALENVS_IN_PROJECT: true
+    working_directory: "~/lib"
+
+
+# -----------------
+# Reusable commands
+# -----------------
+
+commands:
+
+  install:
+    steps:
+      - restore_cache:
+          keys:
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-
+      - run:
+          name: Install Python packages
+          command: poetry install
+      - save_cache:
+          key: virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+          paths:
+            - "./.venv"
+
+
+# --------------
+# Pipeline tasks
+# --------------
+
+jobs:
+
+  lint:
+    executor: standard
+    steps:
+      - checkout
+      - install
+      - run:
+          name: Run Python linter
+          command: poetry run noosci py.lint
+
+  test:
+    executor: standard
+    environment:
+      TEST_GROUP: "unit"
+    steps:
+      - checkout
+      - install
+      - run:
+          name: Run Python tests
+          command: poetry run noosci py.test
+      - store_test_results:
+          path: "."
+
+  build:
+    executor: standard
+    steps:
+      - checkout
+      - install
+      - run:
+          name: Build wheel
+          command: poetry run noosci py.package
+      - store_artifacts:
+          path: dist
+          destination: wheel
+
+  publish:
+    executor: standard
+    steps:
+      - checkout
+      - install
+      - run:
+          name: Publish wheel
+          command: poetry run noosci py.release
+
+
+# -----------------
+# Pipeline workflow
+# -----------------
+
+workflows:
+
+  version: 2
+
+  lint-test-build-publish:
+    jobs:
+      - lint:
+          filters:
+            tags:
+              only: /.*/
+      - test:
+          filters:
+            tags:
+              only: /.*/
+      - build:
+          requires:
+            - lint
+            - test
+          filters:
+            tags:
+              only: /.*/
+      - publish:
+          context: CIRCLECI_SHARED
+          requires:
+            - build
+          filters:
+            tags:
+              only: /[0-9]+(\.[0-9]+)*(-alpha\.[0-9]+)?/
+            branches:
+              ignore: /.*/
