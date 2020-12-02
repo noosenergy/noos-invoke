@@ -1,0 +1,59 @@
+[build-system]
+requires = ["poetry>=1.0.0"]
+build-backend = "poetry.masonry.api"
+
+[tool.poetry]
+# Description
+name = "noos-ci"
+version = "0.0.1-alpha"
+description = "Shared workflows across CI/CD pipelines"
+# Credentials
+license = "MIT"
+authors = ["Noos Energy <contact@noos.energy>"]
+homepage = "https://github.com/noosenergy/noos-deploy"
+# Package data
+packages = [
+    { include = "noos_ci", from = "src" },
+]
+# Distribution
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+]
+
+[tool.poetry.scripts]
+noosci = "noos_ci:program.run"
+
+[tool.poetry.dependencies]
+python = "^3.7"
+invoke = "*"
+
+[tool.poetry.dev-dependencies]
+# Format
+isort = "*"
+black = {version = "*", allow-prereleases = true}
+# Linter
+pydocstyle = "*"
+flake8 = "*"
+mypy = "*"
+# Testing
+pytest = "*"
+# Debugging
+ipdb = "*"
+ipython = "*"
+
+[tool.isort]
+line_length = 99
+multi_line_output = 3
+lines_after_imports = 2
+default_section = "THIRDPARTY"
+known_first_party = "noos_ci"
+sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
+
+[tool.black]
+line-length = 99
+target_version = ['py37']
