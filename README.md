@@ -1,8 +1,8 @@
-[![CircleCI](https://circleci.com/gh/noosenergy/noos-ci.svg?style=svg&circle-token=68d1a71e4f53ab1a1f33110e9a8c24bd3300a8ba)](https://circleci.com/gh/noosenergy/noos-ci)
+[![CircleCI](https://circleci.com/gh/noosenergy/noos-deploy.svg?style=svg&circle-token=68d1a71e4f53ab1a1f33110e9a8c24bd3300a8ba)](https://circleci.com/gh/noosenergy/noos-deploy)
 
 # Noos Deploy
 
-Shared workflows across CI/CD pipelines
+Software development kit for sharing workflows across CI/CD pipelines.
 
 ## Quickstart
 
