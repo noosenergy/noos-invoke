@@ -48,13 +48,13 @@ def test(ctx, target="./src/tests", group=None):
 
 
 @task
-def package(ctx, target="./src/tests", group=None):
+def package(ctx):
     """Build project wheel distribution."""
     ctx.run("poetry build", pty=True)
 
 
 @task
-def release(ctx, user="noosenergy", token=PYPI_TOKEN, group=None):
+def release(ctx, user="__token__", token=PYPI_TOKEN):
     """Publish wheel distribution to PyPi."""
     assert token is not None, "Missing remote PyPi registry token."
     ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)
