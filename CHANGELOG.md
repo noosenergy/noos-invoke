@@ -17,3 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - New Helm and Docker collection configuration.
  - Better tasks args for the Python collection.
+
+## [0.0.1-alpha.3] - 2020-12-03
+### Changed
+ - Allow login to either AWS ECR or Dockerhub.
+ - Enforce test chart deployment into minikube.
