@@ -6,7 +6,7 @@ Software development kit for sharing workflows across CI/CD pipelines.
 
 ## Quickstart
 
-### Docker installation
+### Python installation
 
 On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed and pre-configured,
 
@@ -14,7 +14,7 @@ On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed an
 
 ### Local development
 
-This project is relying on its own shipped CLI, for common CI/CD tasks.
+This project is relying on its own shipped CLI, for common CI/CD tasks. Within Poetry's virtual environement:
 
 ```
 $ nooci

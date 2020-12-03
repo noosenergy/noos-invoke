@@ -7,7 +7,7 @@ from . import utils
 
 CONFIG = {
     "py": {
-        "target": "./src",
+        "source": "./src",
         "user": "__token__",
         "token": os.getenv("PYPI_TOKEN"),
     }
@@ -25,30 +25,30 @@ def clean(ctx):
 
 
 @task
-def format(ctx, target=None):
+def format(ctx, source=None):
     """Auto-format source code."""
-    target = target or ctx.py.target
-    utils.check_path(target)
-    ctx.run(f"black {target}", pty=True)
-    ctx.run(f"isort {target}", pty=True)
+    source = source or ctx.py.source
+    utils.check_path(source)
+    ctx.run(f"black {source}", pty=True)
+    ctx.run(f"isort {source}", pty=True)
 
 
 @task
-def lint(ctx, target=None):
+def lint(ctx, source=None):
     """Run python linters."""
-    target = target or ctx.py.target
-    utils.check_path(target)
-    ctx.run(f"black --check {target}", pty=True)
-    ctx.run(f"isort --check-only {target}", pty=True)
-    ctx.run(f"pydocstyle {target}", pty=True)
-    ctx.run(f"flake8 {target}", pty=True)
-    ctx.run(f"mypy {target}", pty=True)
+    source = source or ctx.py.source
+    utils.check_path(source)
+    ctx.run(f"black --check {source}", pty=True)
+    ctx.run(f"isort --check-only {source}", pty=True)
+    ctx.run(f"pydocstyle {source}", pty=True)
+    ctx.run(f"flake8 {source}", pty=True)
+    ctx.run(f"mypy {source}", pty=True)
 
 
 @task
-def test(ctx, target=None, group=None):
+def test(ctx, source=None, group=None):
     """Run pytest with optional grouped tests."""
-    path = target or ctx.py.target
+    path = source or ctx.py.source
     if group:
         path += "/" + group
     utils.check_path(path)
