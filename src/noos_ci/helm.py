@@ -60,13 +60,13 @@ def test(
 ):
     """Test local deployment in Minikube."""
     chart = chart or ctx.helm.chart
-    values = chart or ctx.helm.values
+    values = values or ctx.helm.values
     utils.check_path(chart)
     utils.check_path(values)
     cmd = f"helm install {release} {chart} --values {values} "
-    cmd += f"--create-namespace --namespace {namespace} --kube-context {context} "
+    cmd += f"--create-namespace --namespace {namespace} --kube-context {context}"
     if dry_run:
-        cmd += "--dry-run --debug"
+        cmd += " --dry-run --debug"
     ctx.run(cmd, pty=True)
 
 
