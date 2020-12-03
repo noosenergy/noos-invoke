@@ -26,7 +26,8 @@ def login(ctx, repo=None, user=None, token=None):
     user = user or ctx.docker.user
     if user == "AWS":
         _aws_login(ctx, repo)
-    _dockerhub_login(ctx, user, token)
+    else:
+        _dockerhub_login(ctx, user, token)
 
 
 def _aws_login(ctx, repo):
