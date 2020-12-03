@@ -64,7 +64,7 @@ def test(
     utils.check_path(chart)
     utils.check_path(values)
     cmd = f"helm install {release} {chart} --values {values} "
-    cmd += f"--create-namespace --namespace {namespace} --context {context} "
+    cmd += f"--create-namespace --namespace {namespace} --kube-context {context} "
     if dry_run:
         cmd += "--dry-run --debug"
     ctx.run(cmd, pty=True)
