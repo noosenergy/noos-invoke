@@ -14,4 +14,4 @@ ns.add_collection(helm.ns)
 ns.add_collection(py.ns)
 
 
-main = Program(namespace=ns, version="0.0.1a1")
+main = Program(namespace=ns, version="0.0.1a2")
