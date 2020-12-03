@@ -8,7 +8,7 @@ from . import utils
 CONFIG = {
     "helm": {
         "repo": "noos-private",
-        "url": "https://charts.noos.energy",
+        "url": os.getenv("CHARTMUSEUM_URL"),
         "user": "noosenergy",
         "token": os.getenv("CHARTMUSEUM_TOKEN"),
         "plugins": ["https://github.com/chartmuseum/helm-push.git"],

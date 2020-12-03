@@ -7,8 +7,8 @@ from . import utils
 
 CONFIG = {
     "docker": {
-        "repo": os.getenv("AWS_ECR_URL", "noosenergy"),
-        "user": "noosenergy",
+        "repo": os.getenv("AWS_ECR_URL"),
+        "user": "AWS",
         "token": os.getenv("DOCKERHUB_TOKEN"),
         "name": "noos-prod",
         "context": ".",
