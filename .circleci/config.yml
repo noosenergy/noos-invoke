@@ -54,8 +54,6 @@ jobs:
 
   test:
     executor: standard
-    environment:
-      TEST_GROUP: "unit"
     steps:
       - checkout
       - install
@@ -97,27 +95,29 @@ workflows:
 
   version: 2
 
-  lint-test-build-publish:
+  lint-test-build:
     jobs:
-      - lint:
-          filters:
-            tags:
-              only: /.*/
-      - test:
-          filters:
-            tags:
-              only: /.*/
+      - lint
+      - test
       - build:
           requires:
             - lint
             - test
+
+  publish:
+    jobs:
+      - approve-for-publishing:
+          type: approval
           filters:
             tags:
-              only: /.*/
+              # ONLY git tag compliant format: e.g. `0.0.1-alpha.01`
+              only: /[0-9]+(\.[0-9]+)*(-alpha\.[0-9]+)?/
+            branches:
+              ignore: /.*/
       - publish:
           context: CIRCLECI_PYPI_SHARED
           requires:
-            - build
+            - approve-for-publishing
           filters:
             tags:
               only: /[0-9]+(\.[0-9]+)*(-alpha\.[0-9]+)?/
