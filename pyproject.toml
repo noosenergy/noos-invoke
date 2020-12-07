@@ -42,6 +42,7 @@ flake8 = "*"
 mypy = "*"
 # Testing
 pytest = "*"
+pytest-mock = "*"
 # Debugging
 ipdb = "*"
 ipython = "*"

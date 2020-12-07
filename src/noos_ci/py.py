@@ -1,4 +1,4 @@
-import os
+import enum
 
 from invoke import Collection, task
 
@@ -8,10 +8,17 @@ from . import utils
 CONFIG = {
     "py": {
         "source": "./src",
+        "tests": "./src/tests",
         "user": "__token__",
-        "token": os.getenv("PYPI_TOKEN"),
+        "token": None,
     }
 }
+
+
+class GroupType(str, enum.Enum):
+    unit = "unit"
+    integration = "integration"
+    functional = "functional"
 
 
 # Python deployment workflow
@@ -46,10 +53,11 @@ def lint(ctx, source=None):
 
 
 @task
-def test(ctx, source=None, group=None):
+def test(ctx, tests=None, group=None):
     """Run pytest with optional grouped tests."""
-    path = source or ctx.py.source
+    path = tests or ctx.py.tests
     if group:
+        assert group in GroupType.__members__, f"Unknown py.test group {group}."
         path += "/" + group
     utils.check_path(path)
     ctx.run(f"pytest {path}", pty=True)
