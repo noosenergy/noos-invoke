@@ -1,5 +1,3 @@
-import os
-
 from invoke import Collection, task
 
 from . import utils
@@ -8,9 +6,9 @@ from . import utils
 CONFIG = {
     "helm": {
         "repo": "noos-private",
-        "url": os.getenv("CHARTMUSEUM_URL"),
+        "url": None,
         "user": "noosenergy",
-        "token": os.getenv("CHARTMUSEUM_TOKEN"),
+        "token": None,
         "plugins": ["https://github.com/chartmuseum/helm-push.git"],
         "chart": "./helm/chart",
         "values": "./local/helm-values.yaml",

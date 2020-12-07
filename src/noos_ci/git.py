@@ -1,11 +1,9 @@
-import os
-
 from invoke import Collection, task
 
 
 CONFIG = {
     "git": {
-        "token": os.getenv("GITHUB_TOKEN"),
+        "token": None,
     }
 }
 
