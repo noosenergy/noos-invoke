@@ -1,3 +1,4 @@
+import enum
 import os
 
 from invoke import Collection, task
@@ -7,14 +8,19 @@ from . import utils
 
 CONFIG = {
     "docker": {
-        "repo": os.getenv("AWS_ECR_URL"),
+        "repo": None,
         "user": "AWS",
-        "token": os.getenv("DOCKERHUB_TOKEN"),
+        "token": None,
         "name": "noos-prod",
         "context": ".",
         "tag": "test",
     }
 }
+
+
+class UserType(str, enum.Enum):
+    AWS = "AWS"
+    noosenergy = "noosenergy"
 
 
 # Docker deployment workflow:
@@ -24,9 +30,10 @@ CONFIG = {
 def login(ctx, repo=None, user=None, token=None):
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
-    if user == "AWS":
+    assert user in UserType.__members__, f"Unknown repo user {user}."
+    if user == UserType.AWS:
         _aws_login(ctx, repo)
-    else:
+    if user == UserType.noosenergy:
         _dockerhub_login(ctx, user, token)
 
 
