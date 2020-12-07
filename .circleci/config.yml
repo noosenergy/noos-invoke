@@ -85,6 +85,8 @@ jobs:
       - run:
           name: Publish wheel
           command: poetry run noosci py.release
+          environment:
+            NOOSCI_PY_TOKEN: $PYPI_TOKEN
 
 
 # -----------------
