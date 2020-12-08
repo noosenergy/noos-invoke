@@ -27,3 +27,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Change OS env var prefix to `NOOSCI_` instead of `INVOKE_`.
  - Initialize sensitive config values to `None`.
+
+## [0.0.1-alpha.5] - 2020-12-08
+### Added
+ - Split CircleCI workflow between testing and publishing.
+ - Add a package manager field to run Python tasks within a venv.

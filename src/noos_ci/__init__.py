@@ -6,7 +6,7 @@ from invoke import Collection, Config, Program
 from . import docker, git, helm, local, python
 
 
-__version__ = "0.0.1a4"
+__version__ = "0.0.1a5"
 
 
 class BaseConfig(Config):
