@@ -12,6 +12,7 @@ license = "MIT"
 authors = ["Noos Energy <contact@noos.energy>"]
 homepage = "https://github.com/noosenergy/noos-deploy"
 # Package data
+readme = "README.md"
 packages = [
     { include = "noos_ci", from = "src" },
 ]
