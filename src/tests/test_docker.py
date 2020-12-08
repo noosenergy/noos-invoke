@@ -9,7 +9,7 @@ def ctx():
     return context.Context(config=docker.CONFIG)
 
 
-class TestLogin:
+class TestDockerLogin:
     def test_invalid_user_raises_error(self, ctx):
         with pytest.raises(AssertionError):
             docker.login(ctx, user="bad_user")
@@ -23,7 +23,7 @@ class TestLogin:
             docker.login(ctx, user="noosenergy")
 
 
-class TestBuild:
+class TestDockerBuild:
     def test_invalid_context_raises_error(self, ctx):
         with pytest.raises(utils.PathNotFound):
             docker.build(ctx, context="bad_context")
