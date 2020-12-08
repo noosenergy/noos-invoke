@@ -44,7 +44,6 @@ Core options:
 
 Subcommands:
 
-  dev.dotenv     Create local dotenv file.
   docker.build   Build Docker image locally.
   docker.login   Login to Docker remote registry (AWS ECR or Dockerhub).
   docker.push    Push Docker image to a remote registry.
@@ -54,10 +53,11 @@ Subcommands:
   helm.login     Login to Helm remote registry (Chart Museum).
   helm.push      Push Helm chart to a remote registry.
   helm.test      Test local deployment in Minikube.
-  py.clean       Clean project from temp files / dirs.
-  py.format      Auto-format source code.
-  py.lint        Run python linters.
-  py.package     Build project wheel distribution.
-  py.release     Publish wheel distribution to PyPi.
-  py.test        Run pytest with optional grouped tests.
+  local.dotenv   Create local dotenv file.
+  python.clean   Clean project from temp files / dirs.
+  python.format  Auto-format source code.
+  python.lint    Run python linters.
+  python.package Build project wheel distribution.
+  python.release Publish wheel distribution to PyPi.
+  python.test    Run pytest with optional grouped tests.
 ```
