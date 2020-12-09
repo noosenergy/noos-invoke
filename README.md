@@ -44,20 +44,22 @@ Core options:
 
 Subcommands:
 
-  docker.build   Build Docker image locally.
-  docker.login   Login to Docker remote registry (AWS ECR or Dockerhub).
-  docker.push    Push Docker image to a remote registry.
-  git.config     Setup git credentials with a Github token.
-  helm.install   Provision local Helm client (Chart Museum Plugin).
-  helm.lint      Check compliance of Helm charts / values.
-  helm.login     Login to Helm remote registry (Chart Museum).
-  helm.push      Push Helm chart to a remote registry.
-  helm.test      Test local deployment in Minikube.
-  local.dotenv   Create local dotenv file.
-  python.clean   Clean project from temp files / dirs.
-  python.format  Auto-format source code.
-  python.lint    Run python linters.
-  python.package Build project wheel distribution.
-  python.release Publish wheel distribution to PyPi.
-  python.test    Run pytest with optional grouped tests.
+  docker.build       Build Docker image locally.
+  docker.login       Login to Docker remote registry (AWS ECR or Dockerhub).
+  docker.push        Push Docker image to a remote registry.
+  git.config         Setup git credentials with a Github token.
+  helm.install       Provision local Helm client (Chart Museum Plugin).
+  helm.lint          Check compliance of Helm charts / values.
+  helm.login         Login to Helm remote registry (Chart Museum).
+  helm.push          Push Helm chart to a remote registry.
+  helm.test          Test local deployment in Minikube.
+  local.dotenv       Create local dotenv file.
+  python.clean       Clean project from temp files / dirs.
+  python.format      Auto-format source code.
+  python.lint        Run python linters.
+  python.package     Build project wheel distribution.
+  python.release     Publish wheel distribution to PyPi.
+  python.test        Run pytest with optional grouped tests.
+  terraform.plan     Run a plan in Terraform cloud.
+  terraform.update   Update variable in Terraform cloud.
 ```
