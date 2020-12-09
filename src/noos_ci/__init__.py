@@ -3,7 +3,7 @@
 
 from invoke import Collection, Config, Program
 
-from . import docker, git, helm, local, python
+from . import docker, git, helm, local, python, terraform
 
 
 __version__ = "0.0.1a5"
@@ -19,6 +19,7 @@ ns.add_collection(git.ns)
 ns.add_collection(helm.ns)
 ns.add_collection(local)
 ns.add_collection(python.ns)
+ns.add_collection(terraform.ns)
 
 
 main = Program(namespace=ns, config_class=BaseConfig, version=__version__)
