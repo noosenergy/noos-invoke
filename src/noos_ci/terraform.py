@@ -26,7 +26,7 @@ def update(ctx, variable="", value="", organisation=None, workspace=None, token=
 
 
 @task
-def plan(ctx, message="", organisation=None, workspace=None, token=None):
+def run(ctx, message="", organisation=None, workspace=None, token=None):
     """Run a plan in Terraform cloud."""
     organisation = organisation or ctx.terraform.organisation
     workspace = workspace or ctx.terraform.workspace
@@ -38,4 +38,4 @@ def plan(ctx, message="", organisation=None, workspace=None, token=None):
 ns = Collection("terraform")
 ns.configure(CONFIG)
 ns.add_task(update)
-ns.add_task(plan)
+ns.add_task(run)
