@@ -60,6 +60,6 @@ Subcommands:
   python.package     Build project wheel distribution.
   python.release     Publish wheel distribution to PyPi.
   python.test        Run pytest with optional grouped tests.
-  terraform.plan     Run a plan in Terraform cloud.
+  terraform.run      Run a plan in Terraform cloud.
   terraform.update   Update variable in Terraform cloud.
 ```
