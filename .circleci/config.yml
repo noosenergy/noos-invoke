@@ -12,7 +12,6 @@ executors:
       - image: circleci/python:3.7.6
         environment:
           POETRY_VIRTUALENVS_IN_PROJECT: true
-          NOOSCI_PYTHON_INSTALL: "poetry"
     working_directory: "~/lib"
 
 
@@ -51,7 +50,7 @@ jobs:
       - install_venv
       - run:
           name: Run Python linter
-          command: poetry run noosci python.lint
+          command: make lint
 
   test:
     executor: standard
@@ -60,7 +59,7 @@ jobs:
       - install_venv
       - run:
           name: Run Python tests
-          command: poetry run noosci python.test
+          command: make test
       - store_test_results:
           path: "."
 
@@ -71,7 +70,7 @@ jobs:
       - install_venv
       - run:
           name: Build wheel
-          command: poetry run noosci python.package
+          command: make package
       - store_artifacts:
           path: dist
           destination: wheel
@@ -83,9 +82,7 @@ jobs:
       - install_venv
       - run:
           name: Publish wheel
-          command: poetry run noosci python.release
-          environment:
-            NOOSCI_PYTHON_TOKEN: $PYPI_TOKEN
+          command: make release
 
 
 # -----------------
