@@ -32,6 +32,7 @@ noosci = "noos_ci:main.run"
 [tool.poetry.dependencies]
 python = "^3.7"
 invoke = "*"
+terraform-client = {git = "https://github.com/noosenergy/terraform-client.git"}
 
 [tool.poetry.dev-dependencies]
 # Format
