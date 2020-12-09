@@ -1,5 +1,6 @@
-import terraform_client
 from invoke import Collection, task
+
+import noos_tf
 
 
 CONFIG = {
@@ -20,7 +21,7 @@ def update(ctx, variable="", value="", organisation=None, workspace=None, token=
     organisation = organisation or ctx.terraform.organisation
     workspace = workspace or ctx.terraform.workspace
     token = token or ctx.terraform.token
-    terraform_client.update_workspace_variable(organisation, workspace, token, variable, value)
+    noos_tf.update_workspace_variable(organisation, workspace, token, variable, value)
     print(f"Updated Terraform {variable!r} value to {value!r}")
 
 
@@ -30,7 +31,7 @@ def plan(ctx, message="", organisation=None, workspace=None, token=None):
     organisation = organisation or ctx.terraform.organisation
     workspace = workspace or ctx.terraform.workspace
     token = token or ctx.terraform.token
-    url = terraform_client.create_workspace_run(organisation, workspace, token, message)
+    url = noos_tf.create_workspace_run(organisation, workspace, token, message)
     print(f"Running Terraform plan for {workspace}: {url}")
 
 
