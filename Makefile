@@ -1,7 +1,5 @@
 SHELL := /bin/sh -e
 
-PYPI_USERNAME ?= __token__
-
 .DEFAULT_GOAL := help
 
 
@@ -42,4 +40,4 @@ package:  ## Build project wheel distribution
 	poetry build
 
 release:  ## Publish wheel distribution to PyPi
-	poetry publish --build -u ${PYPI_USERNAME} -p ${PYPI_TOKEN}
+	poetry publish --build -u ${PYPI_USER} -p ${PYPI_TOKEN}
