@@ -32,7 +32,6 @@ noosci = "noos_ci:main.run"
 [tool.poetry.dependencies]
 python = "^3.7"
 invoke = "*"
-noos-tf = "*"
 
 [tool.poetry.dev-dependencies]
 # Format
@@ -54,7 +53,7 @@ line_length = 99
 multi_line_output = 3
 lines_after_imports = 2
 default_section = "THIRDPARTY"
-known_first_party = "noos_ci,noos_tf"
+known_first_party = "noos_ci"
 sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.black]
