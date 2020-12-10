@@ -36,3 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.1-alpha.6] - 2020-12-09
 ### Added
  - Add CI/CD tasks for basic Terraform workflow.
+
+## [0.0.1] - 2020-12-10
+### Added
+ - First production release.
