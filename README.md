@@ -4,43 +4,24 @@
 
 Software development kit for sharing workflows across CI/CD pipelines.
 
-## Quickstart
+## Installation
 
-### Python installation
+Package available from the [PyPi repository](https://pypi.org/project/noos-ci/):
 
-On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed and pre-configured,
+    $ pip install noos-ci
 
-    $ brew install poetry
+## Usage as a command line tool
 
-### Local development
+The `noos-ci` package exposes a command line interface, for managing common CI/CD tasks.
 
-This project is relying on its own shipped CLI, for common CI/CD tasks. Within Poetry's virtual environement:
+Such a project aims to enforce parity between development and CI/CD workflows, ensuring reproducability in local and remote containers (e.g. executable versions, command line calls, environment variables...).
 
-```
-$ nooci
+From the terminal,
+
+```shell
+$ noosci
+
 Usage: noosci [--core-opts] <subcommand> [--subcommand-opts] ...
-
-Core options:
-
-  --complete                         Print tab-completion candidates for given parse remainder.
-  --hide=STRING                      Set default value of run()'s 'hide' kwarg.
-  --print-completion-script=STRING   Print the tab-completion script for your preferred shell
-                                     (bash|zsh|fish).
-  --prompt-for-sudo-password         Prompt user at start of session for the sudo.password config value.
-  --write-pyc                        Enable creation of .pyc files.
-  -d, --debug                        Enable debug output.
-  -D INT, --list-depth=INT           When listing tasks, only show the first INT levels.
-  -e, --echo                         Echo executed commands before running.
-  -f STRING, --config=STRING         Runtime configuration file to use.
-  -F STRING, --list-format=STRING    Change the display format used when listing tasks. Should be one of:
-                                     flat (default), nested, json.
-  -h [STRING], --help[=STRING]       Show core or per-task help and exit.
-  -l [STRING], --list[=STRING]       List available tasks, optionally limited to a namespace.
-  -p, --pty                          Use a pty when executing shell commands.
-  -R, --dry                          Echo commands instead of running.
-  -T INT, --command-timeout=INT      Specify a global command execution timeout, in seconds.
-  -V, --version                      Show version and exit.
-  -w, --warn-only                    Warn, instead of failing, when shell commands fail.
 
 Subcommands:
 
@@ -62,4 +43,24 @@ Subcommands:
   python.test        Run pytest with optional grouped tests.
   terraform.run      Run a plan in Terraform cloud.
   terraform.update   Update variable in Terraform cloud.
+```
+
+## Development
+
+On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed and pre-configured,
+
+    $ brew install poetry
+
+This project is shipped with a Makefile, which is ready to do basic common tasks.
+
+```shell
+$ make
+
+help                           Display this auto-generated help message
+clean                          Clean project from temp files / dirs
+format                         Run auto-formatting linters
+lint                           Run python linters
+test                           Run pytest with all tests
+package                        Build project wheel distribution
+release                        Publish wheel distribution to PyPi
 ```
