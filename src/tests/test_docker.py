@@ -10,17 +10,13 @@ def ctx():
 
 
 class TestDockerLogin:
-    def test_invalid_user_raises_error(self, ctx):
-        with pytest.raises(AssertionError):
-            docker.login(ctx, user="bad_user")
-
     def test_no_aws_repo_raises_error(self, ctx):
         with pytest.raises(AssertionError):
             docker.login(ctx, user="AWS")
 
     def test_no_dockerhub_token_raises_error(self, ctx):
         with pytest.raises(AssertionError):
-            docker.login(ctx, user="noosenergy")
+            docker.login(ctx, user="other_user")
 
 
 class TestDockerBuild:

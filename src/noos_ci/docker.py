@@ -20,7 +20,6 @@ CONFIG = {
 
 class UserType(str, enum.Enum):
     AWS = "AWS"
-    noosenergy = "noosenergy"
 
 
 # Docker deployment workflow:
@@ -30,10 +29,9 @@ class UserType(str, enum.Enum):
 def login(ctx, repo=None, user=None, token=None):
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
-    assert user in UserType.__members__, f"Unknown repo user {user}."
     if user == UserType.AWS:
         _aws_login(ctx, repo)
-    if user == UserType.noosenergy:
+    else:
         _dockerhub_login(ctx, user, token)
 
 
