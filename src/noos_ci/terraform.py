@@ -34,7 +34,6 @@ def run(ctx, message="", organisation=None, workspace=None, token=None):
     assert token is not None, "Missing Terraform Cloud token."
     cmd = f"noostf run --message '{message}' "
     cmd += f"--organisation {organisation} --workspace {workspace} --token {token}"
-    breakpoint()
     ctx.run(cmd, pty=True)
 
 
