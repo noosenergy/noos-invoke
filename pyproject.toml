@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "noos-ci"
-version = "0.0.1"
+version = "0.0.2"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 license = "MIT"
