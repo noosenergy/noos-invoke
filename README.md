@@ -4,21 +4,41 @@
 
 Software development kit for sharing workflows across CI/CD pipelines.
 
+Such a project aims to enforce parity between development and CI/CD workflows, ensuring reproducability in local and remote containers (e.g. executable versions, command line calls, environment variables...).
+
 ## Installation
 
-Package available from the [PyPi repository](https://pypi.org/project/noos-ci/):
+Install the package from the [PyPi repository](https://pypi.org/project/noos-ci/):
 
     $ pip install noos-ci
 
+To enable shell completion, execute the following command (e.g. `zsh`),
+
+    $ noosci --print-completion-script=zsh
+
+And copy/paste its `stdout` into your shell config.
+
+```bash
+# NOOSCI completion script
+
+_complete_noosci() {
+    collection_arg=''
+    if [[ "${words}" =~ "(-c|--collection) [^ ]+" ]]; then
+        collection_arg=$MATCH
+    fi
+    reply=( $(noosci ${=collection_arg} --complete -- ${words}) )
+}
+
+compctl -K _complete_noosci + -f noosci
+```
+
 ## Usage as a command line tool
 
-The `noos-ci` package exposes a command line interface, for managing common CI/CD tasks.
-
-Such a project aims to enforce parity between development and CI/CD workflows, ensuring reproducability in local and remote containers (e.g. executable versions, command line calls, environment variables...).
+The `noos-ci` package installs a CLI binary, for managing common CI/CD tasks.
 
 From the terminal,
 
-```shell
+```
 $ noosci
 
 Usage: noosci [--core-opts] <subcommand> [--subcommand-opts] ...
@@ -53,7 +73,7 @@ On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed an
 
 This project is shipped with a Makefile, which is ready to do basic common tasks.
 
-```shell
+```
 $ make
 
 help                           Display this auto-generated help message
