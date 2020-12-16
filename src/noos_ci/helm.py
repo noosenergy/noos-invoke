@@ -30,7 +30,7 @@ def login(ctx, repo=None, url=None, user=None, token=None):
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}", pty=True)
 
 
-@task
+@task(iterable=["plugins"])
 def install(ctx, plugins=None):
     """Provision local Helm client (Chart Museum Plugin)."""
     plugins = plugins or ctx.helm.plugins
