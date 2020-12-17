@@ -56,6 +56,7 @@ Subcommands:
   helm.test          Test local deployment in Minikube.
   local.dotenv       Create local dotenv file.
   python.clean       Clean project from temp files / dirs.
+  python.coverage    Run coverage test report.
   python.format      Auto-format source code.
   python.lint        Run python linters.
   python.package     Build project wheel distribution.
