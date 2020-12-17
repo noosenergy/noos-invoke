@@ -27,7 +27,7 @@ def login(ctx, repo=None, url=None, user=None, token=None):
     user = user or ctx.helm.user
     token = token or ctx.helm.token
     assert token is not None, "Missing remote Helm registry token."
-    ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}", pty=True)
+    ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}")
 
 
 @task(iterable=["plugins"])
@@ -35,7 +35,7 @@ def install(ctx, plugins=None):
     """Provision local Helm client (Chart Museum Plugin)."""
     plugins = plugins or ctx.helm.plugins
     for plugin in plugins:
-        ctx.run(f"helm plugin install {plugin}", pty=True)
+        ctx.run(f"helm plugin install {plugin}")
 
 
 @task
@@ -43,7 +43,7 @@ def lint(ctx, chart=None):
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
     utils.check_path(chart)
-    ctx.run(f"helm lint {chart}", pty=True)
+    ctx.run(f"helm lint {chart}")
 
 
 @task(help={"dry-run": "Whether to render the Helm manifest first"})
@@ -65,7 +65,7 @@ def test(
     cmd += f"--create-namespace --namespace {namespace} --kube-context {context}"
     if dry_run:
         cmd += " --dry-run --debug"
-    ctx.run(cmd, pty=True)
+    ctx.run(cmd)
 
 
 @task
@@ -74,7 +74,7 @@ def push(ctx, chart=None, repo=None):
     chart = chart or ctx.helm.chart
     repo = repo or ctx.helm.repo
     utils.check_path(chart)
-    ctx.run(f"helm push {chart} {repo}", pty=True)
+    ctx.run(f"helm push {chart} {repo}")
 
 
 ns = Collection("helm")

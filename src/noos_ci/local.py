@@ -15,4 +15,4 @@ def dotenv(ctx, template="./dotenv.tpl", target="./.env", force=False):
         if force:
             raise utils.PathNotFound
     except utils.PathNotFound:
-        ctx.run(f"cp {template} {target}", pty=True)
+        ctx.run(f"cp {template} {target}")

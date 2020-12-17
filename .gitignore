@@ -14,6 +14,11 @@ pytest.xml
 # MyPy
 .mypy_cache
 
+# Coverage
+.coverage
+coverage.xml
+htmlcov
+
 # Poetry
 .venv
 

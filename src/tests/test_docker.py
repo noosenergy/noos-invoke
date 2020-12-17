@@ -34,14 +34,14 @@ class TestDockerLogin:
 
         docker.login(ctx, repo="http://hostname/repo", user="AWS")
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
     def test_fetch_dockerhub_command_correctly(self, test_run, ctx):
         cmd = "docker login --username other_user --password test_token"
 
         docker.login(ctx, user="other_user", token="test_token")
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestDockerBuild:
@@ -58,7 +58,7 @@ class TestDockerBuild:
 
         docker.build(ctx, name="test-image", context=image_context)
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
     def test_fetch_command_correctly_with_build_args(
         self, monkeypatch, test_run, ctx, image_context
@@ -72,13 +72,22 @@ class TestDockerBuild:
 
         docker.build(ctx, name="test-image", context=image_context, arg="TEST_VARIABLE")
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestDockerPush:
+    def test_fetch_command_correctly(self, test_run, ctx):
+        cmd = "docker push test-repo/test-image:latest"
+
+        docker.push(ctx, repo="test-repo", name="test-image")
+
+        assert test_run.call_count == 4
+        test_run.assert_called_with(cmd)
+
     def test_fetch_dry_run_command_correctly(self, test_run, ctx):
         cmd = "docker tag test-image test-repo/test-image:latest"
 
         docker.push(ctx, repo="test-repo", name="test-image", dry_run=True)
 
-        test_run.assert_called_with(cmd, pty=True)
+        assert test_run.call_count == 2
+        test_run.assert_called_with(cmd)
