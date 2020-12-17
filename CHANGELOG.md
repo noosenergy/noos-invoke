@@ -50,3 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Add Python task to generate test coverage reports.
  - Add Docker task to inject environment variables as build arguments
  - Generally improve tasks test coverage.
+
+## [0.0.4] - 2020-12-17
+### Changed
+ - Push Helm chart packaged up with their dependencies by default.
