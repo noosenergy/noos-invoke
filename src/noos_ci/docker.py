@@ -1,13 +1,13 @@
 import enum
 import os
-from typing import Any, Dict, Optional
+from typing import Optional
 
 from invoke import Collection, Context, task
 
 from . import utils
 
 
-CONFIG: Dict[str, Any] = {
+CONFIG = {
     "docker": {
         "repo": None,
         "user": "AWS",

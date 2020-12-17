@@ -76,9 +76,18 @@ class TestDockerBuild:
 
 
 class TestDockerPush:
+    def test_fetch_command_correctly(self, test_run, ctx):
+        cmd = "docker push test-repo/test-image:latest"
+
+        docker.push(ctx, repo="test-repo", name="test-image")
+
+        assert test_run.call_count == 4
+        test_run.assert_called_with(cmd, pty=True)
+
     def test_fetch_dry_run_command_correctly(self, test_run, ctx):
         cmd = "docker tag test-image test-repo/test-image:latest"
 
         docker.push(ctx, repo="test-repo", name="test-image", dry_run=True)
 
+        assert test_run.call_count == 2
         test_run.assert_called_with(cmd, pty=True)
