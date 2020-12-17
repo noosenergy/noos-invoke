@@ -74,7 +74,7 @@ def push(ctx, chart=None, repo=None):
     chart = chart or ctx.helm.chart
     repo = repo or ctx.helm.repo
     utils.check_path(chart)
-    ctx.run(f"helm push {chart} {repo}")
+    ctx.run(f"helm push {chart} {repo} --dependency-update")
 
 
 ns = Collection("helm")
