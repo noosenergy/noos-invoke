@@ -1,4 +1,5 @@
 import enum
+from typing import Optional
 
 from invoke import Collection, Context, task
 
@@ -21,7 +22,7 @@ class InstallType(str, enum.Enum):
     pipenv = "pipenv"
 
     @classmethod
-    def get(cls, ctx, value):
+    def get(cls, ctx: Context, value: Optional[str]) -> str:
         install = value or ctx.python.install
         assert install in cls.__members__, f"Unknown Python installation {install}."
         return install
