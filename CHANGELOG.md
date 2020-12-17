@@ -44,3 +44,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.2] - 2020-12-10
 ### Changed
  - Small breadcrumbs left behind...
+
+## [0.0.3] - 2020-12-17
+### Added
+ - Add Python task to generate test coverage reports.
+ - Add Docker task to inject environment variables as build arguments
+ - Generally improve tasks test coverage.
