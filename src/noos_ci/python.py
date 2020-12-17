@@ -40,8 +40,8 @@ class GroupType(str, enum.Enum):
 @task
 def clean(ctx):
     """Clean project from temp files / dirs."""
-    ctx.run("rm -rf build dist", pty=True)
-    ctx.run("find src -type d -name __pycache__ | xargs rm -rf", pty=True)
+    ctx.run("rm -rf build dist")
+    ctx.run("find src -type d -name __pycache__ | xargs rm -rf")
 
 
 @task

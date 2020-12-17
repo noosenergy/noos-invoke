@@ -23,7 +23,7 @@ class TestDotEnv:
 
         local.dotenv(ctx, template=dotenv, target="~/new_dotenv")
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
     def test_not_recreate_if_exists_already(self, test_run, ctx, dotenv):
         local.dotenv(ctx, template=dotenv, target=dotenv)
@@ -35,4 +35,4 @@ class TestDotEnv:
 
         local.dotenv(ctx, template=dotenv, target=dotenv, force=True)
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)

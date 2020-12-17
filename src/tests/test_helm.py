@@ -32,7 +32,7 @@ class TestHelmLogin:
             ctx, repo="test_repo", url="http://hostname/", user="test_user", token="test-token"
         )
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestHelmInstall:
@@ -41,7 +41,7 @@ class TestHelmInstall:
 
         helm.install(ctx, plugins=["http://hostname/"])
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestHelmLint:
@@ -54,7 +54,7 @@ class TestHelmLint:
 
         helm.lint(ctx, chart=chart)
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestHelmPush:
@@ -67,4 +67,4 @@ class TestHelmPush:
 
         helm.push(ctx, chart=chart, repo="test_repo")
 
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
