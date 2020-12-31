@@ -11,7 +11,7 @@ CONFIG = {
         "install": "pipenv",
         "source": "./src",
         "tests": "./src/tests",
-        "user": "__token__",
+        "user": None,
         "token": None,
     }
 }
@@ -68,10 +68,10 @@ def lint(ctx, source=None, install=None):
 
 
 @task
-def test(ctx, tests=None, group=None, install=None):
+def test(ctx, tests=None, group="", install=None):
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
-    if group:
+    if group != "":
         assert group in GroupType.__members__, f"Unknown py.test group {group}."
         tests += "/" + group
     utils.check_path(tests)
@@ -103,6 +103,7 @@ def release(ctx, user=None, token=None, install=None):
     """Publish wheel distribution to PyPi."""
     user = user or ctx.python.user
     token = token or ctx.python.token
+    assert user is not None, "Missing remote PyPi registry user."
     assert token is not None, "Missing remote PyPi registry token."
     install_type = InstallType.get(ctx, install)
     if install_type == InstallType.poetry:
