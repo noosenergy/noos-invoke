@@ -12,7 +12,10 @@ help:  ## Display this auto-generated help message
 
 
 # Development
-.PHONY: clean format
+.PHONY: update clean format
+
+update:  ## Lock and install build dependencies
+	poetry update
 
 clean:  ## Clean project from temp files / dirs
 	rm -rf build dist
@@ -24,7 +27,10 @@ format:  ## Run auto-formatting linters
 
 
 # Deployment
-.PHONY: lint test
+.PHONY: install lint test package release
+
+install:  ## Install build dependencies from lock file
+	poetry install
 
 lint:  ## Run python linters
 	poetry run black --check src
