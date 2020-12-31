@@ -12,7 +12,7 @@ CONFIG = {
         "repo": None,
         "user": "AWS",
         "token": None,
-        "name": "noos-prod",
+        "name": "webserver",
         "context": ".",
         "arg": None,
         "tag": "test",
