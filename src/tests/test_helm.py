@@ -18,9 +18,17 @@ def chart():
 
 
 class TestHelmLogin:
-    def test_missing_token_raises_error(self, ctx):
+    @pytest.mark.parametrize(
+        "url,user,token",
+        [
+            (None, None, None),
+            ("http://hostname/", None, None),
+            ("http://hostname/", "test_user", None),
+        ],
+    )
+    def test_missing_secret_raises_error(self, url, user, token, ctx):
         with pytest.raises(AssertionError):
-            helm.login(ctx)
+            helm.login(ctx, url=url, user=user, token=token)
 
     def test_fetch_command_correctly(self, test_run, ctx):
         cmd = (

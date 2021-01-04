@@ -5,9 +5,9 @@ from . import utils
 
 CONFIG = {
     "helm": {
-        "repo": "noos-private",
+        "repo": "local-repo",
         "url": None,
-        "user": "noosenergy",
+        "user": None,
         "token": None,
         "plugins": ["https://github.com/chartmuseum/helm-push.git"],
         "chart": "./helm/chart",
@@ -26,6 +26,8 @@ def login(ctx, repo=None, url=None, user=None, token=None):
     url = url or ctx.helm.url
     user = user or ctx.helm.user
     token = token or ctx.helm.token
+    assert url is not None, "Missing remote Helm registry url."
+    assert user is not None, "Missing remote Helm registry user."
     assert token is not None, "Missing remote Helm registry token."
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}")
 

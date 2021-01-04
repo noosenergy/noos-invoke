@@ -4,7 +4,7 @@
 
 Software development kit for sharing workflows across CI/CD pipelines.
 
-Such a project aims to enforce parity between development and CI/CD workflows, ensuring reproducability in local and remote containers (e.g. executable versions, command line calls, environment variables...).
+Such a project aims to enforce parity and reproducability between local development and CI/CD workflows in remote containers (e.g. executable versions, command line calls, environment variables...).
 
 ## Installation
 
@@ -78,8 +78,10 @@ This project is shipped with a Makefile, which is ready to do basic common tasks
 $ make
 
 help                           Display this auto-generated help message
+update                         Lock and install build dependencies
 clean                          Clean project from temp files / dirs
 format                         Run auto-formatting linters
+install                        Install build dependencies from lock file
 lint                           Run python linters
 test                           Run pytest with all tests
 package                        Build project wheel distribution

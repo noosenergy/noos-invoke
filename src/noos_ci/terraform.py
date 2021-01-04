@@ -1,10 +1,12 @@
-from invoke import Collection, task
+from typing import Optional
+
+from invoke import Collection, Context, task
 
 
 CONFIG = {
     "terraform": {
-        "organisation": "noosenergy",
-        "workspace": "noos-prod",
+        "organisation": None,
+        "workspace": None,
         "token": None,
     }
 }
@@ -16,27 +18,27 @@ CONFIG = {
 @task
 def update(ctx, variable="", value="", organisation=None, workspace=None, token=None):
     """Update variable in Terraform cloud."""
-    organisation = organisation or ctx.terraform.organisation
-    workspace = workspace or ctx.terraform.workspace
-    token = token or ctx.terraform.token
-    assert token is not None, "Missing Terraform Cloud token."
-    cmd = f"noostf update --variable {variable} --value '{value}' "
-    ctx.run(_append_credentials(cmd, organisation, workspace, token), pty=True)
+    cmd = f"noostf update --variable {variable} --value '{value}'"
+    ctx.run(cmd + _append_credentials(ctx, organisation, workspace, token), pty=True)
 
 
 @task
 def run(ctx, message="", organisation=None, workspace=None, token=None):
     """Run a plan in Terraform cloud."""
-    organisation = organisation or ctx.terraform.organisation
-    workspace = workspace or ctx.terraform.workspace
-    token = token or ctx.terraform.token
-    assert token is not None, "Missing Terraform Cloud token."
-    cmd = f"noostf run --message '{message}' "
-    ctx.run(_append_credentials(cmd, organisation, workspace, token), pty=True)
+    cmd = f"noostf run --message '{message}'"
+    ctx.run(cmd + _append_credentials(ctx, organisation, workspace, token), pty=True)
 
 
-def _append_credentials(cmd: str, organisation: str, workspace: str, token: str) -> str:
-    cmd += f"--organisation {organisation} --workspace {workspace} --token {token}"
+def _append_credentials(
+    ctx: Context, organisation: Optional[str], workspace: Optional[str], token: Optional[str]
+) -> str:
+    cmd = ""
+    for arg in ctx.terraform:
+        # Check credentials
+        secret = locals()[arg] or ctx.terraform[arg]
+        assert secret is not None, f"Missing Terraform Cloud {arg}."
+        # Return credentials args
+        cmd += f" --{arg} {secret}"
     return cmd
 
 

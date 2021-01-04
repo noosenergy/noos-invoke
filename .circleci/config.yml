@@ -21,7 +21,7 @@ executors:
 
 commands:
 
-  install_venv:
+  install-venv:
     steps:
       - restore_cache:
           keys:
@@ -30,7 +30,7 @@ commands:
             - virtualenv-{{ .Environment.CACHE_VERSION }}-
       - run:
           name: Install Python packages
-          command: poetry install
+          command: make install
       - save_cache:
           key: virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
           paths:
@@ -43,31 +43,31 @@ commands:
 
 jobs:
 
-  lint:
+  lint-package:
     executor: standard
     steps:
       - checkout
-      - install_venv
+      - install-venv
       - run:
           name: Run Python linter
           command: make lint
 
-  test:
+  test-package:
     executor: standard
     steps:
       - checkout
-      - install_venv
+      - install-venv
       - run:
           name: Run Python tests
           command: make test
       - store_test_results:
           path: "."
 
-  build:
+  build-wheel:
     executor: standard
     steps:
       - checkout
-      - install_venv
+      - install-venv
       - run:
           name: Build wheel
           command: make package
@@ -75,11 +75,11 @@ jobs:
           path: dist
           destination: wheel
 
-  publish:
+  publish-wheel:
     executor: standard
     steps:
       - checkout
-      - install_venv
+      - install-venv
       - run:
           name: Publish wheel
           command: make release
@@ -95,12 +95,12 @@ workflows:
 
   lint-test-build:
     jobs:
-      - lint
-      - test
-      - build:
+      - lint-package
+      - test-package
+      - build-wheel:
           requires:
-            - lint
-            - test
+            - lint-package
+            - test-package
 
   publish:
     jobs:
@@ -112,7 +112,7 @@ workflows:
               only: /[0-9]+(\.[0-9]+)*(-alpha\.[0-9]+)?/
             branches:
               ignore: /.*/
-      - publish:
+      - publish-wheel:
           context: CIRCLECI_PYPI_SHARED
           requires:
             - approve-for-publishing

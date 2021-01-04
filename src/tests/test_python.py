@@ -91,9 +91,16 @@ class TestPythonPackage:
 
 
 class TestPythonRelease:
-    def test_missing_token_raises_error(self, ctx):
+    @pytest.mark.parametrize(
+        "user,token",
+        [
+            (None, None),
+            ("test_user", None),
+        ],
+    )
+    def test_missing_secret_raises_error(self, user, token, ctx):
         with pytest.raises(AssertionError):
-            python.release(ctx)
+            python.release(ctx, user=user, token=token)
 
     def test_unknown_install_type_raises_error(self, ctx):
         with pytest.raises(AssertionError):
