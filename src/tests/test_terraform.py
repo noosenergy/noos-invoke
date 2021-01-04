@@ -1,7 +1,7 @@
 import pytest
 from invoke import context
 
-from noos_ci import terraform
+from noos_inv import terraform
 
 
 @pytest.fixture
