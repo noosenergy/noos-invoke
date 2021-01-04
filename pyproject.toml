@@ -4,17 +4,17 @@ build-backend = "poetry.masonry.api"
 
 [tool.poetry]
 # Description
-name = "noos-ci"
+name = "noos-inv"
 version = "0.0.4"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 license = "MIT"
 authors = ["Noos Energy <contact@noos.energy>"]
-homepage = "https://github.com/noosenergy/noos-deploy"
+homepage = "https://github.com/noosenergy/noos-invoke"
 # Package data
 readme = "README.md"
 packages = [
-    { include = "noos_ci", from = "src" },
+    { include = "noos_inv", from = "src" },
 ]
 # Distribution
 classifiers = [
@@ -27,7 +27,7 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-noosci = "noos_ci:main.run"
+noosinv = "noos_inv:main.run"
 
 [tool.poetry.dependencies]
 python = "^3.7"
@@ -54,7 +54,7 @@ line_length = 99
 multi_line_output = 3
 lines_after_imports = 2
 default_section = "THIRDPARTY"
-known_first_party = "noos_ci"
+known_first_party = "noos_inv"
 sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.black]
