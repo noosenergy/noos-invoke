@@ -54,3 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.4] - 2020-12-17
 ### Changed
  - Push Helm chart packaged up with their dependencies by default.
+
+## [0.0.5] - 2021-01-04
+### Changed
+ - Rename project binary and python package `noos-inv` in relation with `inv[oke]`.
