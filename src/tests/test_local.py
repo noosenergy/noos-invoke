@@ -3,7 +3,7 @@ import tempfile
 import pytest
 from invoke import Context
 
-from noos_ci import local
+from noos_inv import local
 
 
 @pytest.fixture

@@ -2,7 +2,7 @@ import tempfile
 
 import pytest
 
-from noos_ci import utils
+from noos_inv import utils
 
 
 @pytest.fixture

@@ -3,7 +3,7 @@ import tempfile
 import pytest
 from invoke import context
 
-from noos_ci import docker, utils
+from noos_inv import docker, utils
 
 
 @pytest.fixture

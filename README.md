@@ -1,47 +1,47 @@
-[![CircleCI](https://circleci.com/gh/noosenergy/noos-deploy.svg?style=svg&circle-token=68d1a71e4f53ab1a1f33110e9a8c24bd3300a8ba)](https://circleci.com/gh/noosenergy/noos-deploy)
+[![CircleCI](https://circleci.com/gh/noosenergy/noos-invoke.svg?style=svg&circle-token=68d1a71e4f53ab1a1f33110e9a8c24bd3300a8ba)](https://circleci.com/gh/noosenergy/noos-invoke)
 
-# Noos Deploy
+# Noos Invoke
 
 Software development kit for sharing workflows across CI/CD pipelines.
 
-Such a project aims to enforce parity and reproducability between local development and CI/CD workflows in remote containers (e.g. executable versions, command line calls, environment variables...).
+Such a project aims to enforce parity and reproducability between local development and CI/CD workflows in remote containers (e.g. executable versions, command line calls, environment variables...) - developped with `inv[oke]`(https://github.com/pyinvoke/invoke).
 
 ## Installation
 
-Install the package from the [PyPi repository](https://pypi.org/project/noos-ci/):
+Install the package from the [PyPi repository](https://pypi.org/project/noos-inv/):
 
-    $ pip install noos-ci
+    $ pip install noos-inv
 
 To enable shell completion, execute the following command (e.g. `zsh`),
 
-    $ noosci --print-completion-script=zsh
+    $ noosinv --print-completion-script=zsh
 
 And copy/paste its `stdout` into your shell config.
 
 ```bash
-# NOOSCI completion script
+# NOOSINV completion script
 
-_complete_noosci() {
+_complete_noosinv() {
     collection_arg=''
     if [[ "${words}" =~ "(-c|--collection) [^ ]+" ]]; then
         collection_arg=$MATCH
     fi
-    reply=( $(noosci ${=collection_arg} --complete -- ${words}) )
+    reply=( $(noosinv ${=collection_arg} --complete -- ${words}) )
 }
 
-compctl -K _complete_noosci + -f noosci
+compctl -K _complete_noosinv + -f noosinv
 ```
 
 ## Usage as a command line tool
 
-The `noos-ci` package installs a CLI binary, for managing common CI/CD tasks.
+The `noos-inv` package installs a CLI binary, for managing common CI/CD tasks.
 
 From the terminal,
 
 ```
-$ noosci
+$ noosinv
 
-Usage: noosci [--core-opts] <subcommand> [--subcommand-opts] ...
+Usage: noosinv [--core-opts] <subcommand> [--subcommand-opts] ...
 
 Subcommands:
 

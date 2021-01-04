@@ -3,7 +3,7 @@ import tempfile
 import pytest
 from invoke import context
 
-from noos_ci import helm, utils
+from noos_inv import helm, utils
 
 
 @pytest.fixture

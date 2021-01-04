@@ -1,4 +1,4 @@
-# Using `invoke` as library
+# Using `invoke` as a library
 # http://docs.pyinvoke.org/en/stable/concepts/library.html
 
 from invoke import Collection, Config, Program
@@ -10,7 +10,7 @@ __version__ = "0.0.4"
 
 
 class BaseConfig(Config):
-    prefix = "noosci"
+    prefix = "noosinv"
 
 
 ns = Collection()
