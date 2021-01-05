@@ -32,6 +32,14 @@ _complete_noosinv() {
 compctl -K _complete_noosinv + -f noosinv
 ```
 
+Finally, still in your shell config, enable automatic sub shell loading:
+
+```bash
+# ENV variable sub shell loading with command "source .env"
+
+set -a
+```
+
 ## Usage as a command line tool
 
 The `noos-inv` package installs a CLI binary, for managing common CI/CD tasks.
@@ -65,6 +73,11 @@ Subcommands:
   terraform.run      Run a plan in Terraform cloud.
   terraform.update   Update variable in Terraform cloud.
 ```
+
+Source your environnement variables first for a seamless experience.
+(use command `local.dotenv` to create it from the provided template)
+
+    $ source .env
 
 ## Development
 
