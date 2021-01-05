@@ -22,15 +22,15 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
+    "Typing :: Typed",
 ]
 
 [tool.poetry.scripts]
 noosinv = "noos_inv:main.run"
 
 [tool.poetry.dependencies]
-python = "^3.7"
+python = "^3.8"
 invoke = "*"
 
 [tool.poetry.dev-dependencies]
@@ -59,4 +59,4 @@ sections = "STDLIB,THIRDPARTY,FIRSTPARTY,LOCALFOLDER"
 
 [tool.black]
 line-length = 99
-target_version = ['py37']
+target_version = ['py38']
