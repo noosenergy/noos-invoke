@@ -58,3 +58,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.5] - 2021-01-04
 ### Changed
  - Rename project binary and python package `noos-inv` in relation with `inv[oke]`.
+
+## [0.0.6] - 2021-01-05
+### Changed
+ - Bump Python version to v3.8.6.
