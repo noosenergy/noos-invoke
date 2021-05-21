@@ -48,7 +48,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.3] - 2020-12-17
 ### Added
  - Add Python task to generate test coverage reports.
- - Add Docker task to inject environment variables as build arguments
+ - Add Docker task to inject environment variables as build arguments.
  - Generally improve tasks test coverage.
 
 ## [0.0.4] - 2020-12-17
@@ -62,3 +62,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.6] - 2021-01-05
 ### Changed
  - Bump Python version to v3.8.6.
+
+## [0.0.7] - 2021-05-21
+### Changed
+ - Pass optional `--file` argument to command docker.build.
