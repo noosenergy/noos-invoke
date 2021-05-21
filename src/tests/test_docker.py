@@ -1,3 +1,4 @@
+import pathlib
 import tempfile
 
 import pytest
@@ -15,6 +16,13 @@ def ctx():
 def image_context():
     with tempfile.TemporaryDirectory() as dir_name:
         yield dir_name
+
+
+@pytest.fixture
+def image_file(image_context):
+    path = pathlib.Path(image_context) / "Dockerfile"
+    with path.open(mode="wt"):
+        yield str(path)
 
 
 class TestDockerLogin:
@@ -49,23 +57,30 @@ class TestDockerBuild:
         with pytest.raises(utils.PathNotFound):
             docker.build(ctx, context="bad_context")
 
-    def test_missing_environment_variable_raises_error(self, ctx, image_context):
+    def test_missing_environment_variable_raises_error(self, ctx, image_context, image_file):
         with pytest.raises(AssertionError):
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
-    def test_fetch_command_correctly(self, test_run, ctx, image_context):
-        cmd = f"docker build --pull --tag test-image {image_context}"
+    def test_fetch_command_correctly(self, test_run, ctx, image_context, image_file):
+        cmd = f"docker build --pull --file {image_file} " f"--tag test-image {image_context}"
 
         docker.build(ctx, name="test-image", context=image_context)
 
         test_run.assert_called_with(cmd)
 
+    def test_fetch_command_correctly_with_file(self, test_run, ctx, image_context, image_file):
+        cmd = f"docker build --pull --file {image_file} --tag test-image {image_context}"
+
+        docker.build(ctx, name="test-image", file=image_file, context=image_context)
+
+        test_run.assert_called_with(cmd)
+
     def test_fetch_command_correctly_with_build_args(
-        self, monkeypatch, test_run, ctx, image_context
+        self, monkeypatch, test_run, ctx, image_context, image_file
     ):
         monkeypatch.setenv("TEST_VARIABLE", "test_value")
         cmd = (
-            f"docker build --pull --tag test-image "
+            f"docker build --pull --file {image_file} --tag test-image "
             f"--build-arg TEST_VARIABLE=test_value "
             f"{image_context}"
         )

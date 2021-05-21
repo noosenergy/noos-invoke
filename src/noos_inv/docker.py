@@ -9,12 +9,15 @@ from . import utils
 
 CONFIG = {
     "docker": {
+        # Sensitive
         "repo": None,
-        "user": "AWS",
         "token": None,
-        "name": "webserver",
-        "context": ".",
         "arg": None,
+        # Non-sensitive
+        "user": "AWS",
+        "name": "webserver",
+        "file": "Dockerfile",
+        "context": ".",
         "tag": "test",
     }
 }
@@ -52,13 +55,15 @@ def _dockerhub_login(ctx: Context, user: str, token: Optional[str]) -> None:
 
 
 @task
-def build(ctx, name=None, context=None, arg=None):
+def build(ctx, name=None, file=None, context=None, arg=None):
     """Build Docker image locally."""
     name = name or ctx.docker.name
     context = context or ctx.docker.context
+    file = file or f"{context}/{ctx.docker.file}"
     arg = arg or ctx.docker.arg
+    utils.check_path(file)
     utils.check_path(context)
-    cmd = f"docker build --pull --tag {name} "
+    cmd = f"docker build --pull --file {file} --tag {name} "
     if arg is not None:
         assert arg in os.environ, f"Missing environment variable {arg}."
         cmd += f"--build-arg {arg}={os.environ[arg]} "
