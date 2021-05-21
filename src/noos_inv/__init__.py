@@ -6,7 +6,7 @@ from invoke import Collection, Config, Program
 from . import docker, git, helm, local, python, terraform
 
 
-__version__ = "0.0.6"
+__version__ = "0.0.7"
 
 
 class BaseConfig(Config):
