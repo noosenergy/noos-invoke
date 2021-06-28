@@ -46,7 +46,7 @@ class TestPythonLint:
             python.lint(ctx, source="bad_src")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
-        cmd = f"pipenv run mypy {source}"
+        cmd = f"pipenv run mypy --install-types --non-interactive {source}"
 
         python.lint(ctx, source=source, install="pipenv")
 

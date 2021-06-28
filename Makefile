@@ -37,7 +37,7 @@ lint:  ## Run python linters
 	poetry run isort --check-only src
 	poetry run pydocstyle src
 	poetry run flake8 src
-	poetry run mypy src
+	poetry run mypy --install-types --non-interactive src
 
 test:  ## Run pytest with all tests
 	poetry run pytest src/tests

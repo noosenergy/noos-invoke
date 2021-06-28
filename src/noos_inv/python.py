@@ -64,7 +64,7 @@ def lint(ctx, source=None, install=None):
     ctx.run(cmd + f"isort --check-only {source}", pty=True)
     ctx.run(cmd + f"pydocstyle {source}", pty=True)
     ctx.run(cmd + f"flake8 {source}", pty=True)
-    ctx.run(cmd + f"mypy {source}", pty=True)
+    ctx.run(cmd + f"mypy --install-types --non-interactive {source}", pty=True)
 
 
 @task
