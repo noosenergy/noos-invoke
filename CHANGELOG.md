@@ -66,3 +66,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.7] - 2021-05-21
 ### Changed
  - Pass optional `--file` argument to command docker.build.
+
+## [0.0.8] - 2021-10-07
+### Changed
+ - Update `helm.push` cmd to work with new chartmuseum plugin version 0.10.0
+   and new helm version 3.7

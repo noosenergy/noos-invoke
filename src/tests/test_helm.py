@@ -71,7 +71,7 @@ class TestHelmPush:
             helm.push(ctx, chart="bad_chart")
 
     def test_fetch_command_correctly(self, test_run, ctx, chart):
-        cmd = f"helm push {chart} test_repo --dependency-update"
+        cmd = f"helm cm-push {chart} test_repo"
 
         helm.push(ctx, chart=chart, repo="test_repo")
 
