@@ -71,3 +71,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Update `helm.push` cmd to work with new chartmuseum plugin version 0.10.0
    and new helm version 3.7
+
+## [0.0.9] - 2022-08-31
+### Changed
+ - Update `helm.push` cmd to work with Helm OCI registry functionality
+   (available from helm version 3.8)
