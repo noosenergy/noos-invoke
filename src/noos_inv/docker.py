@@ -1,4 +1,3 @@
-import enum
 import os
 from typing import Optional
 
@@ -11,20 +10,16 @@ CONFIG = {
     "docker": {
         # Sensitive
         "repo": None,
+        "user": "AWS",
         "token": None,
         "arg": None,
         # Non-sensitive
-        "user": "AWS",
-        "name": "webserver",
         "file": "Dockerfile",
         "context": ".",
+        "name": "webserver",
         "tag": "test",
     }
 }
-
-
-class UserType(str, enum.Enum):
-    AWS = "AWS"
 
 
 # Docker deployment workflow:
@@ -34,7 +29,7 @@ class UserType(str, enum.Enum):
 def login(ctx, repo=None, user=None, token=None):
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
-    if user == UserType.AWS:
+    if user == utils.UserType.AWS:
         _aws_login(ctx, repo)
     else:
         _dockerhub_login(ctx, user, token)
