@@ -1,17 +1,23 @@
-from invoke import Collection, task
+from typing import Optional
+
+from invoke import Collection, Context, task
 
 from . import utils
 
 
 CONFIG = {
     "helm": {
+        # Sensitive
         "repo": "local-repo",
         "url": None,
-        "user": None,
+        "user": "AWS",
         "token": None,
+        # Non-sensitive
         "plugins": ["https://github.com/chartmuseum/helm-push.git"],
         "chart": "./helm/chart",
         "values": "./local/helm-values.yaml",
+        "name": "webserver",
+        "tag": "0.1.0",
     }
 }
 
@@ -21,13 +27,27 @@ CONFIG = {
 
 @task
 def login(ctx, repo=None, url=None, user=None, token=None):
-    """Login to Helm remote registry (Chart Museum)."""
+    """Login to Helm remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
-    url = url or ctx.helm.url
     user = user or ctx.helm.user
+    if user == utils.UserType.AWS:
+        _aws_login(ctx, repo)
+    else:
+        _cm_login(ctx, user, repo, url, token)
+
+
+def _aws_login(ctx: Context, repo: str) -> None:
+    cmd = "aws ecr get-login-password | "
+    cmd += f"helm registry login --username AWS --password-stdin {repo}"
+    ctx.run(cmd)
+
+
+def _cm_login(
+    ctx: Context, user: str, repo: str, url: Optional[str], token: Optional[str]
+) -> None:
+    url = url or ctx.helm.url
     token = token or ctx.helm.token
     assert url is not None, "Missing remote Helm registry url."
-    assert user is not None, "Missing remote Helm registry user."
     assert token is not None, "Missing remote Helm registry token."
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}")
 
@@ -71,11 +91,27 @@ def test(
 
 
 @task
-def push(ctx, chart=None, repo=None):
-    """Push Helm chart to a remote registry."""
-    chart = chart or ctx.helm.chart
+def push(ctx, chart=None, repo=None, name=None, tag=None):
+    """Push Helm chart to a remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
+    chart = chart or ctx.helm.chart
     utils.check_path(chart)
+    if ctx.helm.user == utils.UserType.AWS:
+        _aws_push(ctx, chart, repo, name, tag)
+    else:
+        _cm_push(ctx, chart, repo)
+
+
+def _aws_push(
+    ctx: Context, chart: str, repo: Optional[str], name: Optional[str], tag: Optional[str]
+) -> None:
+    names = (name or ctx.helm.name).split("/")
+    tag = tag or ctx.helm.tag
+    ctx.run(f"helm package {chart} --dependency-update")
+    ctx.run(f"helm push {names[-1]}-{tag}.tgz oci://{repo}/{'/'.join(names[:-1])}")
+
+
+def _cm_push(ctx: Context, chart: str, repo: Optional[str]) -> None:
     ctx.run(f"helm dependency update {chart}")
     ctx.run(f"helm cm-push {chart} {repo}")
 
