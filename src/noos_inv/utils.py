@@ -1,4 +1,9 @@
+import enum
 import pathlib
+
+
+class UserType(str, enum.Enum):
+    AWS = "AWS"
 
 
 class PathNotFound(Exception):
