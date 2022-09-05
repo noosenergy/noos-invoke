@@ -76,3 +76,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Update `helm.push` cmd to work with Helm OCI registry functionality
    (available from helm version 3.8)
+
+## [0.0.10] - 2022-09-05
+### Changed
+ - Allow pushing Helm charts to AWS ECR with bespoke tags.
