@@ -43,7 +43,11 @@ def _aws_login(ctx: Context, repo: str) -> None:
 
 
 def _cm_login(
-    ctx: Context, user: str, repo: str, url: Optional[str], token: Optional[str]
+    ctx: Context,
+    user: str,
+    repo: str,
+    url: Optional[str],
+    token: Optional[str],
 ) -> None:
     url = url or ctx.helm.url
     token = token or ctx.helm.token
@@ -90,30 +94,38 @@ def test(
     ctx.run(cmd)
 
 
-@task
-def push(ctx, chart=None, repo=None, name=None, tag=None):
+@task(help={"dry-run": "Whether to package the Helm chart only"})
+def push(ctx, chart=None, repo=None, name=None, tag=None, dry_run=False):
     """Push Helm chart to a remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     chart = chart or ctx.helm.chart
     utils.check_path(chart)
     if ctx.helm.user == utils.UserType.AWS:
-        _aws_push(ctx, chart, repo, name, tag)
+        _aws_push(ctx, chart, repo, name, tag, dry_run)
     else:
-        _cm_push(ctx, chart, repo)
+        _cm_push(ctx, chart, repo, dry_run)
 
 
 def _aws_push(
-    ctx: Context, chart: str, repo: Optional[str], name: Optional[str], tag: Optional[str]
+    ctx: Context,
+    chart: str,
+    repo: str,
+    name: Optional[str],
+    tag: Optional[str],
+    dry_run: bool,
 ) -> None:
     names = (name or ctx.helm.name).split("/")
     tag = tag or ctx.helm.tag
-    ctx.run(f"helm package {chart} --dependency-update")
-    ctx.run(f"helm push {names[-1]}-{tag}.tgz oci://{repo}/{'/'.join(names[:-1])}")
-
-
-def _cm_push(ctx: Context, chart: str, repo: Optional[str]) -> None:
     ctx.run(f"helm dependency update {chart}")
-    ctx.run(f"helm cm-push {chart} {repo}")
+    ctx.run(f"helm package {chart} --version {tag}")
+    if not dry_run:
+        ctx.run(f"helm push {names[-1]}-{tag}.tgz oci://{repo}/{'/'.join(names[:-1])}")
+
+
+def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
+    ctx.run(f"helm dependency update {chart}")
+    if not dry_run:
+        ctx.run(f"helm cm-push {chart} {repo}")
 
 
 ns = Collection("helm")

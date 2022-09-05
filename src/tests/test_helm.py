@@ -95,3 +95,13 @@ class TestHelmPush:
         helm.push(ctx, chart=chart, repo="test-repo")
 
         test_run.assert_called_with(cmd)
+
+    def test_fetch_chartmuseum_command_correctly_with_dry_run(self, test_run, chart):
+        cfg = helm.CONFIG
+        cfg["helm"]["user"] = "other_user"
+        ctx = context.Context(config=cfg)
+        cmd = f"helm dependency update {chart}"
+
+        helm.push(ctx, chart=chart, repo="test-repo", dry_run=True)
+
+        test_run.assert_called_with(cmd)
