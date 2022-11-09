@@ -95,7 +95,7 @@ def package(ctx, install=None):
     if install_type == InstallType.poetry:
         ctx.run("poetry build", pty=True)
     if install_type == InstallType.pipenv:
-        ctx.run("pipenv run python setup.py sdist", pty=True)
+        ctx.run("pipenv run python -m build -n", pty=True)
 
 
 @task

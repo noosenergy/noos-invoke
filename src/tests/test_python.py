@@ -80,7 +80,7 @@ class TestPythonPackage:
     @pytest.mark.parametrize(
         "install,cmd",
         [
-            ("pipenv", "pipenv run python setup.py sdist"),
+            ("pipenv", "pipenv run python -m build -n"),
             ("poetry", "poetry build"),
         ],
     )

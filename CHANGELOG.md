@@ -80,3 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.10] - 2022-09-05
 ### Changed
  - Allow pushing Helm charts to AWS ECR with bespoke tags.
+
+## [0.0.11] - 2022-11-09
+### Changed
+ - Switch to module `build` to package Python librairies with `pipenv`.
