@@ -17,7 +17,7 @@ ns = Collection()
 ns.add_collection(docker.ns)
 ns.add_collection(git.ns)
 ns.add_collection(helm.ns)
-ns.add_collection(local)
+ns.add_collection(local.ns)
 ns.add_collection(python.ns)
 ns.add_collection(terraform.ns)
 

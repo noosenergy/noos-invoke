@@ -1,15 +1,17 @@
 from typing import Optional
 
-from invoke import Collection, Context, task
+from invoke import Collection, Config, Context, Task, task
 
 
-CONFIG = {
-    "terraform": {
-        "organisation": None,
-        "workspace": None,
-        "token": None,
+CONFIG = Config(
+    defaults={
+        "terraform": {
+            "organisation": None,
+            "workspace": None,
+            "token": None,
+        }
     }
-}
+)
 
 
 # Terraform deployment workflow
@@ -43,6 +45,6 @@ def _append_credentials(
 
 
 ns = Collection("terraform")
-ns.configure(CONFIG)
-ns.add_task(update)
-ns.add_task(run)
+ns.configure(CONFIG._defaults)
+ns.add_task(Task(update))
+ns.add_task(Task(run))

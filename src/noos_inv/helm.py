@@ -1,25 +1,27 @@
 from typing import Optional
 
-from invoke import Collection, Context, task
+from invoke import Collection, Config, Context, Task, task
 
 from . import utils
 
 
-CONFIG = {
-    "helm": {
-        # Sensitive
-        "repo": "local-repo",
-        "url": None,
-        "user": "AWS",
-        "token": None,
-        # Non-sensitive
-        "plugins": ["https://github.com/chartmuseum/helm-push.git"],
-        "chart": "./helm/chart",
-        "values": "./local/helm-values.yaml",
-        "name": "webserver",
-        "tag": "0.1.0",
+CONFIG = Config(
+    defaults={
+        "helm": {
+            # Sensitive
+            "repo": "local-repo",
+            "url": None,
+            "user": "AWS",
+            "token": None,
+            # Non-sensitive
+            "plugins": ["https://github.com/chartmuseum/helm-push.git"],
+            "chart": "./helm/chart",
+            "values": "./local/helm-values.yaml",
+            "name": "webserver",
+            "tag": "0.1.0",
+        }
     }
-}
+)
 
 
 # Helm deployment workflow:
@@ -129,9 +131,9 @@ def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
 
 
 ns = Collection("helm")
-ns.configure(CONFIG)
-ns.add_task(login)
-ns.add_task(install)
-ns.add_task(lint)
-ns.add_task(test)
-ns.add_task(push)
+ns.configure(CONFIG._defaults)
+ns.add_task(Task(login))
+ns.add_task(Task(install))
+ns.add_task(Task(lint))
+ns.add_task(Task(test))
+ns.add_task(Task(push))
