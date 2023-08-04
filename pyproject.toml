@@ -22,7 +22,7 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
-    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.11",
     "Typing :: Typed",
 ]
 
@@ -30,7 +30,7 @@ classifiers = [
 noosinv = "noos_inv:main.run"
 
 [tool.poetry.dependencies]
-python = "^3.8"
+python = "^3.11"
 invoke = "*"
 
 [tool.poetry.dev-dependencies]
