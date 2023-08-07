@@ -1,4 +1,4 @@
-from invoke import task
+from invoke import Collection, task
 
 from . import utils
 
@@ -16,3 +16,7 @@ def dotenv(ctx, template="./dotenv.tpl", target="./.env", force=False):
             raise utils.PathNotFound
     except utils.PathNotFound:
         ctx.run(f"cp {template} {target}")
+
+
+ns = Collection("local")
+ns.add_task(dotenv)

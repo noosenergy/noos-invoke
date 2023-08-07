@@ -84,3 +84,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.11] - 2022-11-09
 ### Changed
  - Switch to module `build` to package Python librairies with `pipenv`.
+
+## [0.0.12] - 2023-08-07
+### Changed
+ - Bump Python version to v3.11.4.

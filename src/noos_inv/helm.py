@@ -1,31 +1,33 @@
 from typing import Optional
 
-from invoke import Collection, Context, task
+from invoke import Collection, Config, Context, task
 
 from . import utils
 
 
-CONFIG = {
-    "helm": {
-        # Sensitive
-        "repo": "local-repo",
-        "url": None,
-        "user": "AWS",
-        "token": None,
-        # Non-sensitive
-        "plugins": ["https://github.com/chartmuseum/helm-push.git"],
-        "chart": "./helm/chart",
-        "values": "./local/helm-values.yaml",
-        "name": "webserver",
-        "tag": "0.1.0",
+CONFIG = Config(
+    defaults={
+        "helm": {
+            # Sensitive
+            "repo": "local-repo",
+            "url": None,
+            "user": "AWS",
+            "token": None,
+            # Non-sensitive
+            "plugins": ["https://github.com/chartmuseum/helm-push.git"],
+            "chart": "./helm/chart",
+            "values": "./local/helm-values.yaml",
+            "name": "webserver",
+            "tag": "0.1.0",
+        }
     }
-}
+)
 
 
 # Helm deployment workflow:
 
 
-@task
+@task()
 def login(ctx, repo=None, url=None, user=None, token=None):
     """Login to Helm remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
@@ -64,7 +66,7 @@ def install(ctx, plugins=None):
         ctx.run(f"helm plugin install {plugin}")
 
 
-@task
+@task()
 def lint(ctx, chart=None):
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
@@ -129,7 +131,7 @@ def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
 
 
 ns = Collection("helm")
-ns.configure(CONFIG)
+ns.configure(CONFIG._defaults)
 ns.add_task(login)
 ns.add_task(install)
 ns.add_task(lint)

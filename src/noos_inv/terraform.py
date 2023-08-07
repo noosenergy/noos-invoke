@@ -1,28 +1,30 @@
 from typing import Optional
 
-from invoke import Collection, Context, task
+from invoke import Collection, Config, Context, task
 
 
-CONFIG = {
-    "terraform": {
-        "organisation": None,
-        "workspace": None,
-        "token": None,
+CONFIG = Config(
+    defaults={
+        "terraform": {
+            "organisation": None,
+            "workspace": None,
+            "token": None,
+        }
     }
-}
+)
 
 
 # Terraform deployment workflow
 
 
-@task
+@task()
 def update(ctx, variable="", value="", organisation=None, workspace=None, token=None):
     """Update variable in Terraform cloud."""
     cmd = f"noostf update --variable {variable} --value '{value}'"
     ctx.run(cmd + _append_credentials(ctx, organisation, workspace, token), pty=True)
 
 
-@task
+@task()
 def run(ctx, message="", organisation=None, workspace=None, token=None):
     """Run a plan in Terraform cloud."""
     cmd = f"noostf run --message '{message}'"
@@ -43,6 +45,6 @@ def _append_credentials(
 
 
 ns = Collection("terraform")
-ns.configure(CONFIG)
+ns.configure(CONFIG._defaults)
 ns.add_task(update)
 ns.add_task(run)

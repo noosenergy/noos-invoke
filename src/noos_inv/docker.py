@@ -1,31 +1,33 @@
 import os
 from typing import Optional
 
-from invoke import Collection, Context, task
+from invoke import Collection, Config, Context, task
 
 from . import utils
 
 
-CONFIG = {
-    "docker": {
-        # Sensitive
-        "repo": None,
-        "user": "AWS",
-        "token": None,
-        "arg": None,
-        # Non-sensitive
-        "file": "Dockerfile",
-        "context": ".",
-        "name": "webserver",
-        "tag": "test",
+CONFIG = Config(
+    defaults={
+        "docker": {
+            # Sensitive
+            "repo": None,
+            "user": "AWS",
+            "token": None,
+            "arg": None,
+            # Non-sensitive
+            "file": "Dockerfile",
+            "context": ".",
+            "name": "webserver",
+            "tag": "test",
+        }
     }
-}
+)
 
 
 # Docker deployment workflow:
 
 
-@task
+@task()
 def login(ctx, repo=None, user=None, token=None):
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
@@ -49,7 +51,7 @@ def _dockerhub_login(ctx: Context, user: str, token: Optional[str]) -> None:
     ctx.run(f"docker login --username {user} --password {token}")
 
 
-@task
+@task()
 def build(ctx, name=None, file=None, context=None, arg=None):
     """Build Docker image locally."""
     name = name or ctx.docker.name
@@ -80,7 +82,7 @@ def push(ctx, repo=None, name=None, tag=None, dry_run=False):
 
 
 ns = Collection("docker")
-ns.configure(CONFIG)
+ns.configure(CONFIG._defaults)
 ns.add_task(login)
 ns.add_task(build)
 ns.add_task(push)
