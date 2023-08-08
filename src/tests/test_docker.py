@@ -2,14 +2,14 @@ import pathlib
 import tempfile
 
 import pytest
-from invoke import context
+from invoke import Config, context
 
 from noos_inv import docker, utils
 
 
 @pytest.fixture
 def ctx():
-    return context.Context(config=docker.CONFIG)
+    return context.Context(config=Config(defaults=docker.CONFIG))
 
 
 @pytest.fixture

@@ -1,22 +1,20 @@
 import enum
 from typing import Optional
 
-from invoke import Collection, Config, Context, task
+from invoke import Collection, Context, task
 
 from . import utils
 
 
-CONFIG = Config(
-    defaults={
-        "python": {
-            "install": "pipenv",
-            "source": "./src",
-            "tests": "./src/tests",
-            "user": None,
-            "token": None,
-        }
+CONFIG = {
+    "python": {
+        "install": "pipenv",
+        "source": "./src",
+        "tests": "./src/tests",
+        "user": None,
+        "token": None,
     }
-)
+}
 
 
 class InstallType(str, enum.Enum):
@@ -120,7 +118,7 @@ def _activate_shell(ctx: Context, install: str) -> str:
 
 
 ns = Collection("python")
-ns.configure(CONFIG._defaults)
+ns.configure(CONFIG)
 ns.add_task(clean)
 ns.add_task(format)
 ns.add_task(lint)

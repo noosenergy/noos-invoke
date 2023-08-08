@@ -1,27 +1,25 @@
 import os
 from typing import Optional
 
-from invoke import Collection, Config, Context, task
+from invoke import Collection, Context, task
 
 from . import utils
 
 
-CONFIG = Config(
-    defaults={
-        "docker": {
-            # Sensitive
-            "repo": None,
-            "user": "AWS",
-            "token": None,
-            "arg": None,
-            # Non-sensitive
-            "file": "Dockerfile",
-            "context": ".",
-            "name": "webserver",
-            "tag": "test",
-        }
+CONFIG = {
+    "docker": {
+        # Sensitive
+        "repo": None,
+        "user": "AWS",
+        "token": None,
+        "arg": None,
+        # Non-sensitive
+        "file": "Dockerfile",
+        "context": ".",
+        "name": "webserver",
+        "tag": "test",
     }
-)
+}
 
 
 # Docker deployment workflow:
@@ -82,7 +80,7 @@ def push(ctx, repo=None, name=None, tag=None, dry_run=False):
 
 
 ns = Collection("docker")
-ns.configure(CONFIG._defaults)
+ns.configure(CONFIG)
 ns.add_task(login)
 ns.add_task(build)
 ns.add_task(push)

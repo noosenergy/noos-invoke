@@ -1,13 +1,11 @@
-from invoke import Collection, Config, task
+from invoke import Collection, task
 
 
-CONFIG = Config(
-    defaults={
-        "git": {
-            "token": None,
-        }
+CONFIG = {
+    "git": {
+        "token": None,
     }
-)
+}
 
 
 @task()
@@ -21,5 +19,5 @@ def config(ctx, token=None):
 
 
 ns = Collection("git")
-ns.configure(CONFIG._defaults)
+ns.configure(CONFIG)
 ns.add_task(config)
