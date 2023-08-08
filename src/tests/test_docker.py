@@ -2,14 +2,14 @@ import pathlib
 import tempfile
 
 import pytest
-from invoke import context
+from invoke import Config, context
 
 from noos_inv import docker, utils
 
 
 @pytest.fixture
 def ctx():
-    return context.Context(config=docker.CONFIG)
+    return context.Context(config=Config(defaults=docker.CONFIG))
 
 
 @pytest.fixture
@@ -105,4 +105,20 @@ class TestDockerPush:
         docker.push(ctx, repo="test-repo", name="test-image", dry_run=True)
 
         assert test_run.call_count == 2
+        test_run.assert_called_with(cmd)
+
+    def test_fetch_tag_only_command_correctly(self, test_run, ctx):
+        cmd = "docker push test-repo/test-image:1.0"
+
+        docker.push(ctx, repo="test-repo", name="test-image", tag=1.0, tag_only=True)
+
+        assert test_run.call_count == 2
+        test_run.assert_called_with(cmd)
+
+    def test_fetch_dry_run_tag_only_command_correctly(self, test_run, ctx):
+        cmd = "docker tag test-image test-repo/test-image:1.0"
+
+        docker.push(ctx, repo="test-repo", name="test-image", tag=1.0, dry_run=True, tag_only=True)
+
+        assert test_run.call_count == 1
         test_run.assert_called_with(cmd)

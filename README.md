@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/noosenergy/noos-invoke.svg?style=svg&circle-token=68d1a71e4f53ab1a1f33110e9a8c24bd3300a8ba)](https://circleci.com/gh/noosenergy/noos-invoke)
+[![CircleCI](https://circleci.com/gh/noosenergy/noos-invoke.svg?style=svg&circle-token=5b4d9fc54d8987081b7c4a9a79fa8b436e70930c)](https://circleci.com/gh/noosenergy/noos-invoke)
 
 # Noos Invoke
 

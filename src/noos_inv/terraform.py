@@ -15,14 +15,14 @@ CONFIG = {
 # Terraform deployment workflow
 
 
-@task
+@task()
 def update(ctx, variable="", value="", organisation=None, workspace=None, token=None):
     """Update variable in Terraform cloud."""
     cmd = f"noostf update --variable {variable} --value '{value}'"
     ctx.run(cmd + _append_credentials(ctx, organisation, workspace, token), pty=True)
 
 
-@task
+@task()
 def run(ctx, message="", organisation=None, workspace=None, token=None):
     """Run a plan in Terraform cloud."""
     cmd = f"noostf run --message '{message}'"

@@ -1,14 +1,14 @@
 import tempfile
 
 import pytest
-from invoke import context
+from invoke import Config, context
 
 from noos_inv import python, utils
 
 
 @pytest.fixture
 def ctx():
-    return context.Context(config=python.CONFIG)
+    return context.Context(config=Config(defaults=python.CONFIG))
 
 
 @pytest.fixture

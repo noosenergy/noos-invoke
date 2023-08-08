@@ -37,14 +37,14 @@ class GroupType(str, enum.Enum):
 # Python deployment workflow
 
 
-@task
+@task()
 def clean(ctx):
     """Clean project from temp files / dirs."""
     ctx.run("rm -rf build dist")
     ctx.run("find src -type d -name __pycache__ | xargs rm -rf")
 
 
-@task
+@task()
 def format(ctx, source=None, install=None):
     """Auto-format source code."""
     source = source or ctx.python.source
@@ -54,7 +54,7 @@ def format(ctx, source=None, install=None):
     ctx.run(cmd + f"isort {source}", pty=True)
 
 
-@task
+@task()
 def lint(ctx, source=None, install=None):
     """Run python linters."""
     source = source or ctx.python.source
@@ -67,7 +67,7 @@ def lint(ctx, source=None, install=None):
     ctx.run(cmd + f"mypy {source}", pty=True)
 
 
-@task
+@task()
 def test(ctx, tests=None, group="", install=None):
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
@@ -79,7 +79,7 @@ def test(ctx, tests=None, group="", install=None):
     ctx.run(cmd + f"pytest {tests}", pty=True)
 
 
-@task
+@task()
 def coverage(ctx, config="setup.cfg", report="term", tests=None, install=None):
     """Run coverage test report."""
     tests = tests or ctx.python.tests
@@ -88,7 +88,7 @@ def coverage(ctx, config="setup.cfg", report="term", tests=None, install=None):
     ctx.run(cmd + f"pytest --cov --cov-config={config} --cov-report={report} {tests}", pty=True)
 
 
-@task
+@task()
 def package(ctx, install=None):
     """Build project wheel distribution."""
     install_type = InstallType.get(ctx, install)
@@ -98,7 +98,7 @@ def package(ctx, install=None):
         ctx.run("pipenv run python -m build -n", pty=True)
 
 
-@task
+@task()
 def release(ctx, user=None, token=None, install=None):
     """Publish wheel distribution to PyPi."""
     user = user or ctx.python.user

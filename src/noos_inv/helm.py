@@ -25,7 +25,7 @@ CONFIG = {
 # Helm deployment workflow:
 
 
-@task
+@task()
 def login(ctx, repo=None, url=None, user=None, token=None):
     """Login to Helm remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
@@ -64,7 +64,7 @@ def install(ctx, plugins=None):
         ctx.run(f"helm plugin install {plugin}")
 
 
-@task
+@task()
 def lint(ctx, chart=None):
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart

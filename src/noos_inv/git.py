@@ -8,7 +8,7 @@ CONFIG = {
 }
 
 
-@task
+@task()
 def config(ctx, token=None):
     """Setup git credentials with a Github token."""
     token = token or ctx.git.token
