@@ -88,3 +88,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.12] - 2023-08-07
 ### Changed
  - Bump Python version to v3.11.4.
+
+## [0.0.13] - 2023-09-18
+### Changed
+ - Bump Poetry version to v1.5.1.
