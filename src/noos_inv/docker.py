@@ -18,6 +18,7 @@ CONFIG = {
         "context": ".",
         "name": "webserver",
         "tag": "test",
+        "platform": "linux/arm64,linux/amd64",
     }
 }
 
@@ -78,6 +79,45 @@ def push(ctx, repo=None, name=None, tag=None, dry_run=False, tag_only=False):
         ctx.run(f"docker tag {name} {target_name}")
         if not dry_run:
             ctx.run(f"docker push {target_name}")
+
+
+@task
+def buildx(
+    ctx,
+    platform=None,
+    repo=None,
+    name=None,
+    context=None,
+    tag=None,
+    file=None,
+    arg=None,
+    tag_only=False,
+):
+    """Build and push x-platform Docker image x-platform to a remote registry.
+
+    Without using --push option to push the image in the repo, we get the error:
+    "No output specified with docker-container driver.
+    Build result will only remain in the build cache.
+    To push result image into registry use --push or to load image into docker use --load"
+    In addition: --load option does not work for multiple platforms
+    """
+    repo = repo or ctx.docker.repo
+    name = name or ctx.docker.name
+    tag = tag or ctx.docker.tag
+    file = file or f"{context}/{ctx.docker.file}"
+    arg = arg or ctx.docker.arg
+    platform = platform or ctx.docker.platform
+    utils.check_path(file)
+    utils.check_path(context)
+    tag_list = [tag] if tag_only else [tag, "latest"]
+    for t in tag_list:
+        target_name = f"{repo}/{name}:{t}"
+        cmd = f"docker buildx build --pull --file {file} --tag {target_name} "
+        if arg is not None:
+            assert arg in os.environ, f"Missing environment variable {arg}."
+            cmd += f"--build-arg {arg}={os.environ[arg]} "
+        cmd += f"--platform {platform} --push {context}"
+        ctx.run(cmd)
 
 
 ns = Collection("docker")
