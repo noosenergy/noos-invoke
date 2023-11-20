@@ -96,3 +96,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.14] - 2023-11-17
 ### Added
  - Add docker.buildx to build and push multi-platform images.
+
+## [0.0.15] - 2023-11-20
+### Added
+ - Add buildx command to the docker tasks.
