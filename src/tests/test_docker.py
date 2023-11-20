@@ -122,3 +122,25 @@ class TestDockerPush:
 
         assert test_run.call_count == 1
         test_run.assert_called_with(cmd)
+
+
+class TestDockerBuildx:
+    @pytest.mark.parametrize("image_platfom", ["linux/arm64", "linux/arm64,linux/amd64"])
+    def test_fetch_command_correctly_with_platform(
+        self, test_run, ctx, image_context, image_file, image_platfom
+    ):
+        cmd = (
+            f"docker buildx build --pull --file {image_file} --tag test-repo/test-image:latest "
+            f"--platform {image_platfom} --push {image_context}"
+        )
+
+        docker.buildx(
+            ctx,
+            repo="test-repo",
+            name="test-image",
+            file=image_file,
+            context=image_context,
+            platform=image_platfom,
+        )
+
+        test_run.assert_called_with(cmd)
