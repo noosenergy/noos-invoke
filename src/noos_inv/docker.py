@@ -81,7 +81,7 @@ def push(ctx, repo=None, name=None, tag=None, dry_run=False, tag_only=False):
             ctx.run(f"docker push {target_name}")
 
 
-@task
+@task()
 def buildx(
     ctx,
     platform=None,
@@ -125,3 +125,4 @@ ns.configure(CONFIG)
 ns.add_task(login)
 ns.add_task(build)
 ns.add_task(push)
+ns.add_task(buildx)

@@ -56,6 +56,7 @@ Subcommands:
   docker.build       Build Docker image locally.
   docker.login       Login to Docker remote registry (AWS ECR or Dockerhub).
   docker.push        Push Docker image to a remote registry.
+  docker.buildx      Build and push cross platform Docker image to a remote registry.
   git.config         Setup git credentials with a Github token.
   helm.install       Provision local Helm client (Chart Museum Plugin).
   helm.lint          Check compliance of Helm charts / values.
