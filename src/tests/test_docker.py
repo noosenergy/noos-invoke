@@ -90,6 +90,36 @@ class TestDockerBuild:
         test_run.assert_called_with(cmd)
 
 
+class TestDockerBuildx:
+    def test_invalid_context_raises_error(self, ctx):
+        with pytest.raises(utils.PathNotFound):
+            docker.buildx(ctx, context="bad_context")
+
+    def test_missing_environment_variable_raises_error(self, ctx, image_context, image_file):
+        with pytest.raises(AssertionError):
+            docker.buildx(ctx, context=image_context, arg="BAD_VARIABLE")
+
+    @pytest.mark.parametrize("image_platfom", ["linux/arm64", "linux/arm64,linux/amd64"])
+    def test_fetch_command_correctly_with_platform(
+        self, test_run, ctx, image_context, image_file, image_platfom
+    ):
+        cmd = (
+            f"docker buildx build --pull --file {image_file} --tag test-repo/test-image:latest "
+            f"--platform {image_platfom} --push {image_context}"
+        )
+
+        docker.buildx(
+            ctx,
+            repo="test-repo",
+            name="test-image",
+            file=image_file,
+            context=image_context,
+            platform=image_platfom,
+        )
+
+        test_run.assert_called_with(cmd)
+
+
 class TestDockerPush:
     def test_fetch_command_correctly(self, test_run, ctx):
         cmd = "docker push test-repo/test-image:latest"
@@ -121,26 +151,4 @@ class TestDockerPush:
         docker.push(ctx, repo="test-repo", name="test-image", tag=1.0, dry_run=True, tag_only=True)
 
         assert test_run.call_count == 1
-        test_run.assert_called_with(cmd)
-
-
-class TestDockerBuildx:
-    @pytest.mark.parametrize("image_platfom", ["linux/arm64", "linux/arm64,linux/amd64"])
-    def test_fetch_command_correctly_with_platform(
-        self, test_run, ctx, image_context, image_file, image_platfom
-    ):
-        cmd = (
-            f"docker buildx build --pull --file {image_file} --tag test-repo/test-image:latest "
-            f"--platform {image_platfom} --push {image_context}"
-        )
-
-        docker.buildx(
-            ctx,
-            repo="test-repo",
-            name="test-image",
-            file=image_file,
-            context=image_context,
-            platform=image_platfom,
-        )
-
         test_run.assert_called_with(cmd)
