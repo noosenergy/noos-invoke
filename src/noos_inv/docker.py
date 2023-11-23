@@ -14,9 +14,9 @@ CONFIG = {
         "token": None,
         "arg": None,
         # Non-sensitive
-        "file": "Dockerfile",
-        "context": ".",
         "name": "webserver",
+        "context": ".",
+        "file": "Dockerfile",
         "tag": "test",
         "platform": "linux/arm64,linux/amd64",
     }
@@ -51,14 +51,14 @@ def _dockerhub_login(ctx: Context, user: str, token: Optional[str]) -> None:
 
 
 @task()
-def build(ctx, name=None, file=None, context=None, arg=None):
+def build(ctx, name=None, context=None, file=None, arg=None):
     """Build Docker image locally."""
     name = name or ctx.docker.name
     context = context or ctx.docker.context
-    file = file or f"{context}/{ctx.docker.file}"
-    arg = arg or ctx.docker.arg
-    utils.check_path(file)
     utils.check_path(context)
+    file = file or f"{context}/{ctx.docker.file}"
+    utils.check_path(file)
+    arg = arg or ctx.docker.arg
     cmd = f"docker build --pull --file {file} --tag {name} "
     if arg is not None:
         assert arg in os.environ, f"Missing environment variable {arg}."
@@ -67,8 +67,13 @@ def build(ctx, name=None, file=None, context=None, arg=None):
     ctx.run(cmd)
 
 
-@task(help={"dry-run": "Whether to tag the Docker image only"})
-def push(ctx, repo=None, name=None, tag=None, dry_run=False, tag_only=False):
+@task(
+    help={
+        "tag-only": "Whether to not tag the Docker image as latest",
+        "dry-run": "Whether to only tag the Docker image and to not push",
+    }
+)
+def push(ctx, repo=None, name=None, tag=None, tag_only=False, dry_run=False):
     """Push Docker image to a remote registry."""
     repo = repo or ctx.docker.repo
     name = name or ctx.docker.name
@@ -81,34 +86,40 @@ def push(ctx, repo=None, name=None, tag=None, dry_run=False, tag_only=False):
             ctx.run(f"docker push {target_name}")
 
 
-@task()
+@task(help={"tag-only": "Whether to not tag the Docker image as latest"})
 def buildx(
     ctx,
-    platform=None,
     repo=None,
     name=None,
     context=None,
-    tag=None,
     file=None,
     arg=None,
+    platform=None,
+    tag=None,
     tag_only=False,
 ):
-    """Build and push x-platform Docker image x-platform to a remote registry.
+    """Build and push x-platform Docker image to a remote registry.
 
-    Without using --push option to push the image in the repo, we get the error:
-    "No output specified with docker-container driver.
-    Build result will only remain in the build cache.
-    To push result image into registry use --push or to load image into docker use --load"
-    In addition: --load option does not work for multiple platforms
+    :Warning:
+    Without using `--push` option to push the image, expect the error:
+
+    ```No output specified with docker-container driver.
+    Build result will only remain in the build cache.```
+
+    To push image into registry use `--push`
+    or to load image into docker use `--load`
+
+    In addition: `--load` option does not work for multiple platforms
     """
     repo = repo or ctx.docker.repo
     name = name or ctx.docker.name
-    tag = tag or ctx.docker.tag
+    context = context or ctx.docker.context
+    utils.check_path(context)
     file = file or f"{context}/{ctx.docker.file}"
+    utils.check_path(file)
     arg = arg or ctx.docker.arg
     platform = platform or ctx.docker.platform
-    utils.check_path(file)
-    utils.check_path(context)
+    tag = tag or ctx.docker.tag
     tag_list = [tag] if tag_only else [tag, "latest"]
     for t in tag_list:
         target_name = f"{repo}/{name}:{t}"
@@ -124,5 +135,5 @@ ns = Collection("docker")
 ns.configure(CONFIG)
 ns.add_task(login)
 ns.add_task(build)
-ns.add_task(push)
 ns.add_task(buildx)
+ns.add_task(push)
