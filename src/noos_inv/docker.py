@@ -55,6 +55,13 @@ def _dockerhub_login(ctx: Context, user: str, token: str | None) -> None:
 
 
 @task()
+def configure(ctx: Context, builder: str = "multi-platform-builder") -> None:
+    """Create and provision buildx builder for multi-platform."""
+    ctx.run(f"docker buildx create --name {builder} --use")
+    ctx.run("docker buildx inspect --bootstrap")
+
+
+@task()
 def build(
     ctx: Context,
     name: str | None = None,
@@ -151,6 +158,7 @@ def _get_build_arg_fragment(ctx: Context, arg: str | None) -> str:
 ns = Collection("docker")
 ns.configure(CONFIG)
 ns.add_task(login)
+ns.add_task(configure)
 ns.add_task(build)
 ns.add_task(buildx)
 ns.add_task(push)
