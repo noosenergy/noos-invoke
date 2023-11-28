@@ -1,5 +1,4 @@
 import enum
-from typing import Optional
 
 from invoke import Collection, Context, task
 
@@ -22,7 +21,7 @@ class InstallType(str, enum.Enum):
     pipenv = "pipenv"
 
     @classmethod
-    def get(cls, ctx: Context, value: Optional[str]) -> str:
+    def get(cls, ctx: Context, value: str | None) -> str:
         install = value or ctx.python.install
         assert install in cls.__members__, f"Unknown Python installation {install}."
         return install
@@ -38,14 +37,14 @@ class GroupType(str, enum.Enum):
 
 
 @task()
-def clean(ctx):
+def clean(ctx: Context) -> None:
     """Clean project from temp files / dirs."""
     ctx.run("rm -rf build dist")
     ctx.run("find src -type d -name __pycache__ | xargs rm -rf")
 
 
 @task()
-def format(ctx, source=None, install=None):
+def format(ctx: Context, source: str | None = None, install: str | None = None) -> None:
     """Auto-format source code."""
     source = source or ctx.python.source
     utils.check_path(source)
@@ -55,7 +54,7 @@ def format(ctx, source=None, install=None):
 
 
 @task()
-def lint(ctx, source=None, install=None):
+def lint(ctx: Context, source: str | None = None, install: str | None = None) -> None:
     """Run python linters."""
     source = source or ctx.python.source
     utils.check_path(source)
@@ -68,7 +67,9 @@ def lint(ctx, source=None, install=None):
 
 
 @task()
-def test(ctx, tests=None, group="", install=None):
+def test(
+    ctx: Context, tests: str | None = None, group: str = "", install: str | None = None
+) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
     if group != "":
@@ -80,7 +81,13 @@ def test(ctx, tests=None, group="", install=None):
 
 
 @task()
-def coverage(ctx, config="setup.cfg", report="term", tests=None, install=None):
+def coverage(
+    ctx: Context,
+    config: str = "setup.cfg",
+    report: str = "term",
+    tests: str | None = None,
+    install: str | None = None,
+) -> None:
     """Run coverage test report."""
     tests = tests or ctx.python.tests
     utils.check_path(tests)
@@ -89,7 +96,7 @@ def coverage(ctx, config="setup.cfg", report="term", tests=None, install=None):
 
 
 @task()
-def package(ctx, install=None):
+def package(ctx: Context, install: str | None = None) -> None:
     """Build project wheel distribution."""
     install_type = InstallType.get(ctx, install)
     if install_type == InstallType.poetry:
@@ -99,7 +106,9 @@ def package(ctx, install=None):
 
 
 @task()
-def release(ctx, user=None, token=None, install=None):
+def release(
+    ctx: Context, user: str | None = None, token: str | None = None, install: str | None = None
+) -> None:
     """Publish wheel distribution to PyPi."""
     user = user or ctx.python.user
     token = token or ctx.python.token
@@ -112,7 +121,7 @@ def release(ctx, user=None, token=None, install=None):
         raise NotImplementedError
 
 
-def _activate_shell(ctx: Context, install: str) -> str:
+def _activate_shell(ctx: Context, install: str | None) -> str:
     install_type = InstallType.get(ctx, install)
     return f"{install_type} run "
 

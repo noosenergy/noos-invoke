@@ -54,14 +54,15 @@ Usage: noosinv [--core-opts] <subcommand> [--subcommand-opts] ...
 Subcommands:
 
   docker.build       Build Docker image locally.
+  docker.buildx      Build and push x-platform Docker image to a remote registry.
+  docker.configure   Create and configure buildx builder for multi-platform.
   docker.login       Login to Docker remote registry (AWS ECR or Dockerhub).
   docker.push        Push Docker image to a remote registry.
-  docker.buildx      Build and push cross platform Docker image to a remote registry.
   git.config         Setup git credentials with a Github token.
   helm.install       Provision local Helm client (Chart Museum Plugin).
   helm.lint          Check compliance of Helm charts / values.
-  helm.login         Login to Helm remote registry (Chart Museum).
-  helm.push          Push Helm chart to a remote registry.
+  helm.login         Login to Helm remote registry (AWS ECR or Chart Museum).
+  helm.push          Push Helm chart to a remote registry (AWS ECR or Chart Museum).
   helm.test          Test local deployment in Minikube.
   local.dotenv       Create local dotenv file.
   python.clean       Clean project from temp files / dirs.

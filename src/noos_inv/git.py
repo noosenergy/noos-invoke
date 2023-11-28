@@ -1,4 +1,4 @@
-from invoke import Collection, task
+from invoke import Collection, Context, task
 
 
 CONFIG = {
@@ -9,7 +9,7 @@ CONFIG = {
 
 
 @task()
-def config(ctx, token=None):
+def config(ctx: Context, token: str | None = None) -> None:
     """Setup git credentials with a Github token."""
     token = token or ctx.git.token
     assert token is not None, "Missing Github tokem."

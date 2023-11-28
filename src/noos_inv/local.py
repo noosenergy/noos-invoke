@@ -1,4 +1,4 @@
-from invoke import Collection, task
+from invoke import Collection, Context, task
 
 from . import utils
 
@@ -7,7 +7,12 @@ from . import utils
 
 
 @task(help={"force": "Whether to destroy the existing file first"})
-def dotenv(ctx, template="./dotenv.tpl", target="./.env", force=False):
+def dotenv(
+    ctx: Context,
+    template: str = "./dotenv.tpl",
+    target: str = "./.env",
+    force: bool = False,
+) -> None:
     """Create local dotenv file."""
     utils.check_path(template)
     try:
