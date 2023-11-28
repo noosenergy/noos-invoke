@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List
 
 from invoke import Collection, Context, task
 
@@ -26,7 +26,13 @@ CONFIG = {
 
 
 @task()
-def login(ctx, repo=None, url=None, user=None, token=None):
+def login(
+    ctx: Context,
+    repo: str | None = None,
+    url: str | None = None,
+    user: str | None = None,
+    token: str | None = None,
+) -> None:
     """Login to Helm remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     user = user or ctx.helm.user
@@ -46,8 +52,8 @@ def _cm_login(
     ctx: Context,
     user: str,
     repo: str,
-    url: Optional[str],
-    token: Optional[str],
+    url: str | None,
+    token: str | None,
 ) -> None:
     url = url or ctx.helm.url
     token = token or ctx.helm.token
@@ -57,7 +63,7 @@ def _cm_login(
 
 
 @task(iterable=["plugins"])
-def install(ctx, plugins=None):
+def install(ctx: Context, plugins: List[str] | None = None) -> None:
     """Provision local Helm client (Chart Museum Plugin)."""
     plugins = plugins or ctx.helm.plugins
     for plugin in plugins:
@@ -65,7 +71,7 @@ def install(ctx, plugins=None):
 
 
 @task()
-def lint(ctx, chart=None):
+def lint(ctx: Context, chart=None) -> None:
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
     utils.check_path(chart)
@@ -74,14 +80,14 @@ def lint(ctx, chart=None):
 
 @task(help={"dry-run": "Whether to render the Helm manifest first"})
 def test(
-    ctx,
-    chart=None,
-    values=None,
-    release="test",
-    namespace="default",
-    context="minikube",
-    dry_run=False,
-):
+    ctx: Context,
+    chart: str | None = None,
+    values: str | None = None,
+    release: str = "test",
+    namespace: str = "default",
+    context: str = "minikube",
+    dry_run: bool = False,
+) -> None:
     """Test local deployment in Minikube."""
     chart = chart or ctx.helm.chart
     values = values or ctx.helm.values
@@ -95,7 +101,14 @@ def test(
 
 
 @task(help={"dry-run": "Whether to package the Helm chart only"})
-def push(ctx, chart=None, repo=None, name=None, tag=None, dry_run=False):
+def push(
+    ctx: Context,
+    chart: str | None = None,
+    repo: str | None = None,
+    name: str | None = None,
+    tag: str | None = None,
+    dry_run: bool = False,
+) -> None:
     """Push Helm chart to a remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     chart = chart or ctx.helm.chart
@@ -110,8 +123,8 @@ def _aws_push(
     ctx: Context,
     chart: str,
     repo: str,
-    name: Optional[str],
-    tag: Optional[str],
+    name: str | None,
+    tag: str | None,
     dry_run: bool,
 ) -> None:
     names = (name or ctx.helm.name).split("/")
