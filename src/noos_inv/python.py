@@ -19,6 +19,7 @@ CONFIG = {
 class InstallType(str, enum.Enum):
     poetry = "poetry"
     pipenv = "pipenv"
+    uv = "uv"
 
     @classmethod
     def get(cls, ctx: Context, value: str | None) -> str:
@@ -103,6 +104,8 @@ def package(ctx: Context, install: str | None = None) -> None:
         ctx.run("poetry build", pty=True)
     if install_type == InstallType.pipenv:
         ctx.run("pipenv run python -m build -n", pty=True)
+    if install_type == InstallType.uv:
+        ctx.run("uvx --from build pyproject-build --installer uv", pty=True)
 
 
 @task()
@@ -119,6 +122,8 @@ def release(
         ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)
     if install_type == InstallType.pipenv:
         raise NotImplementedError
+    if install_type == InstallType.uv:
+        ctx.run(f"uvx twine upload dist/* -u {user} -p {token}", pty=True)
 
 
 def _activate_shell(ctx: Context, install: str | None) -> str:
