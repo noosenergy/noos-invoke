@@ -105,7 +105,7 @@ def package(ctx: Context, install: str | None = None) -> None:
     if install_type == InstallType.pipenv:
         ctx.run("pipenv run python -m build -n", pty=True)
     if install_type == InstallType.uv:
-        ctx.run("uvx --from build pyproject-build --installer uv", pty=True)
+        ctx.run("uvx --from build pyproject-build --installer uv")
 
 
 @task()
@@ -123,7 +123,7 @@ def release(
     if install_type == InstallType.pipenv:
         raise NotImplementedError
     if install_type == InstallType.uv:
-        ctx.run(f"uvx twine upload dist/* -u {user} -p {token}", pty=True)
+        ctx.run(f"uvx twine upload dist/* -u {user} -p {token}")
 
 
 def _activate_shell(ctx: Context, install: str | None) -> str:

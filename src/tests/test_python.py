@@ -78,17 +78,19 @@ class TestPythonPackage:
             python.package(ctx, install="bad_install")
 
     @pytest.mark.parametrize(
-        "install,cmd",
+        "install,cmd,pty",
         [
-            ("pipenv", "pipenv run python -m build -n"),
-            ("poetry", "poetry build"),
-            ("uv", "uvx --from build pyproject-build --installer uv"),
+            ("pipenv", "pipenv run python -m build -n", True),
+            ("poetry", "poetry build", True),
+            ("uv", "uvx --from build pyproject-build --installer uv", False),
         ],
     )
-    def test_fetch_command_correctly(self, install, cmd, test_run, ctx):
+    def test_fetch_command_correctly(self, install, cmd, pty, test_run, ctx):
         python.package(ctx, install=install)
-
-        test_run.assert_called_with(cmd, pty=True)
+        if pty:
+            test_run.assert_called_with(cmd, pty=True)
+        else:
+            test_run.assert_called_with(cmd)
 
 
 class TestPythonRelease:
@@ -112,12 +114,15 @@ class TestPythonRelease:
             python.release(ctx, user="test_user", token="test_token", install="pipenv")
 
     @pytest.mark.parametrize(
-        "install,cmd",
+        "install,cmd,pty",
         [
-            ("poetry", "poetry publish --build -u test_user -p test_token"),
-            ("uv", "uvx twine upload dist/* -u test_user -p test_token"),
+            ("poetry", "poetry publish --build -u test_user -p test_token", True),
+            ("uv", "uvx twine upload dist/* -u test_user -p test_token", False),
         ],
     )
-    def test_fetch_command_correctly(self, install, cmd, test_run, ctx):
+    def test_fetch_command_correctly(self, install, cmd, pty, test_run, ctx):
         python.release(ctx, user="test_user", token="test_token", install=install)
-        test_run.assert_called_with(cmd, pty=True)
+        if pty:
+            test_run.assert_called_with(cmd, pty=True)
+        else:
+            test_run.assert_called_with(cmd)
