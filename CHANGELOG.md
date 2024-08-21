@@ -108,3 +108,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.17] - 2023-11-28
 ### Added
  - Provision builder through `docker.configure` for multi-platform images.
+
+## [0.0.18] - 2024-08-21
+### Added
+ - Add support for the `uv` python package manager.
+ 
