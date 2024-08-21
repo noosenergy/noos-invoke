@@ -82,6 +82,7 @@ class TestPythonPackage:
         [
             ("pipenv", "pipenv run python -m build -n"),
             ("poetry", "poetry build"),
+            ("uv", "uvx --from build pyproject-build --installer uv"),
         ],
     )
     def test_fetch_command_correctly(self, install, cmd, test_run, ctx):
@@ -110,9 +111,13 @@ class TestPythonRelease:
         with pytest.raises(NotImplementedError):
             python.release(ctx, user="test_user", token="test_token", install="pipenv")
 
-    def test_fetch_command_correctly(self, test_run, ctx):
-        cmd = "poetry publish --build -u test_user -p test_token"
-
-        python.release(ctx, user="test_user", token="test_token", install="poetry")
-
+    @pytest.mark.parametrize(
+        "install,cmd",
+        [
+            ("poetry", "poetry publish --build -u test_user -p test_token"),
+            ("uv", "uvx twine upload dist/* -u test_user -p test_token"),
+        ],
+    )
+    def test_fetch_command_correctly(self, install, cmd, test_run, ctx):
+        python.release(ctx, user="test_user", token="test_token", install=install)
         test_run.assert_called_with(cmd, pty=True)
