@@ -112,4 +112,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.18] - 2024-08-21
 ### Added
  - Add support for the `uv` python package manager.
- 
+
+## [0.0.19] - 2025-01-13
+### Changed
+ - Bump Python version to v3.12.8.
