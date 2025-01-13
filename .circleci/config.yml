@@ -17,7 +17,7 @@ executors:
 
   standard:
     docker:
-      - image: cimg/python:3.11.4
+      - image: cimg/python:3.12.8
         environment:
           POETRY_VIRTUALENVS_IN_PROJECT: true
     working_directory: "~/lib"
