@@ -31,12 +31,16 @@ class TestPythonFormat:
         with pytest.raises(utils.PathNotFound):
             python.format(ctx, source="bad_src")
 
+    def test_unknown_formatter_type_raises_error(self, ctx, source):
+        with pytest.raises(ValueError):
+            python.format(ctx, source=source, formatters="bad_formatter")
+
     def test_fetch_command_correctly(self, test_run, ctx, source):
-        cmd = f"pipenv run isort {source}"
+        cmd = f"pipenv run ruff format {source}"
 
         python.format(ctx, source=source, install="pipenv")
 
-        assert test_run.call_count == 2
+        assert test_run.call_count == 1
         test_run.assert_called_with(cmd, pty=True)
 
 
@@ -45,12 +49,16 @@ class TestPythonLint:
         with pytest.raises(utils.PathNotFound):
             python.lint(ctx, source="bad_src")
 
+    def test_unknown_linter_type_raises_error(self, ctx, source):
+        with pytest.raises(ValueError):
+            python.lint(ctx, source=source, linters="bad_linter")
+
     def test_fetch_command_correctly(self, test_run, ctx, source):
         cmd = f"pipenv run mypy {source}"
 
-        python.lint(ctx, source=source, install="pipenv")
+        python.lint(ctx, source=source, install="pipenv", linters="black,isort,mypy")
 
-        assert test_run.call_count == 5
+        assert test_run.call_count == 3
         test_run.assert_called_with(cmd, pty=True)
 
 

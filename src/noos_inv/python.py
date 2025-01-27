@@ -1,4 +1,4 @@
-import enum
+from enum import Enum, StrEnum, auto
 
 from invoke import Collection, Context, task
 
@@ -9,6 +9,8 @@ CONFIG = {
     "python": {
         "install": "pipenv",
         "source": "./src",
+        "formatters": "ruff",
+        "linters": "ruff,mypy",
         "tests": "./src/tests",
         "user": None,
         "token": None,
@@ -16,7 +18,7 @@ CONFIG = {
 }
 
 
-class InstallType(str, enum.Enum):
+class InstallType(str, Enum):
     poetry = "poetry"
     pipenv = "pipenv"
     uv = "uv"
@@ -28,10 +30,26 @@ class InstallType(str, enum.Enum):
         return install
 
 
-class GroupType(str, enum.Enum):
-    unit = "unit"
-    integration = "integration"
-    functional = "functional"
+class GroupType(StrEnum):
+    unit = auto()
+    integration = auto()
+    functional = auto()
+
+
+class FormatterType(StrEnum):
+    BLACK = auto()
+    ISORT = auto()
+    RUFF = auto()
+
+
+class LinterType(StrEnum):
+    BLACK = auto()
+    ISORT = auto()
+    PYDOCSTYLE = auto()
+    FLAKE8 = auto()
+    RUFF = auto()
+    MYPY = auto()
+    IMPORTS = auto()
 
 
 # Python deployment workflow
@@ -45,26 +63,56 @@ def clean(ctx: Context) -> None:
 
 
 @task()
-def format(ctx: Context, source: str | None = None, install: str | None = None) -> None:
+def format(
+    ctx: Context,
+    source: str | None = None,
+    install: str | None = None,
+    formatters: str | None = None,
+) -> None:
     """Auto-format source code."""
     source = source or ctx.python.source
     utils.check_path(source)
     cmd = _activate_shell(ctx, install)
-    ctx.run(cmd + f"black {source}", pty=True)
-    ctx.run(cmd + f"isort {source}", pty=True)
+    list_formatters = formatters.split(",") if formatters else ctx.python.formatters.split(",")
+    for formatter in list_formatters:
+        match formatter:
+            case FormatterType.BLACK:
+                ctx.run(cmd + f"black {source}", pty=True)
+            case FormatterType.ISORT:
+                ctx.run(cmd + f"isort {source}", pty=True)
+            case FormatterType.RUFF:
+                ctx.run(cmd + f"ruff format {source}", pty=True)
+            case _:
+                raise ValueError(f"Unexpected formatter {formatter}")
 
 
 @task()
-def lint(ctx: Context, source: str | None = None, install: str | None = None) -> None:
+def lint(
+    ctx: Context, source: str | None = None, install: str | None = None, linters: str | None = None
+) -> None:
     """Run python linters."""
     source = source or ctx.python.source
     utils.check_path(source)
     cmd = _activate_shell(ctx, install)
-    ctx.run(cmd + f"black --check {source}", pty=True)
-    ctx.run(cmd + f"isort --check-only {source}", pty=True)
-    ctx.run(cmd + f"pydocstyle {source}", pty=True)
-    ctx.run(cmd + f"flake8 {source}", pty=True)
-    ctx.run(cmd + f"mypy {source}", pty=True)
+    list_linters = linters.split(",") if linters else ctx.python.linters.split(",")
+    for linter in list_linters:
+        match linter:
+            case LinterType.BLACK:
+                ctx.run(cmd + f"black --check {source}", pty=True)
+            case LinterType.ISORT:
+                ctx.run(cmd + f"isort --check-only {source}", pty=True)
+            case LinterType.PYDOCSTYLE:
+                ctx.run(cmd + f"pydocstyle {source}", pty=True)
+            case LinterType.FLAKE8:
+                ctx.run(cmd + f"flake8 {source}", pty=True)
+            case LinterType.MYPY:
+                ctx.run(cmd + f"mypy {source}", pty=True)
+            case LinterType.RUFF:
+                ctx.run(cmd + f"ruff check {source}", pty=True)
+            case LinterType.IMPORTS:
+                ctx.run(cmd + f"lint-imports", pty=True)
+            case _:
+                raise ValueError(f"Unexpected linter {linter}")
 
 
 @task()
