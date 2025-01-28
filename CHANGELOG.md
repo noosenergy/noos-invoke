@@ -116,3 +116,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.0.19] - 2025-01-13
 ### Changed
  - Bump Python version to v3.12.8.
+
+## [0.2.0] - 2025-01-27
+### Changed
+ - Allow a specific formatter or linter in `python.format` and `python.lint`.

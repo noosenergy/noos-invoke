@@ -22,8 +22,7 @@ clean:  ## Clean project from temp files / dirs
 	find src -type d -name __pycache__ | xargs rm -rf
 
 format:  ## Run auto-formatting linters
-	poetry run black src
-	poetry run isort src
+	poetry run ruff format src
 
 
 # Deployment
@@ -33,10 +32,7 @@ install:  ## Install build dependencies from lock file
 	poetry install
 
 lint:  ## Run python linters
-	poetry run black --check src
-	poetry run isort --check-only src
-	poetry run pydocstyle src
-	poetry run flake8 src
+	poetry run ruff check src
 	poetry run mypy src
 
 test:  ## Run pytest with all tests
