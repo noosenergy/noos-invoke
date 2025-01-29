@@ -120,3 +120,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-01-27
 ### Changed
  - Allow a specific formatter or linter in `python.format` and `python.lint`.
+
+## [0.2.1] - 2025-01-29
+### Changed
+ - Amend ruff format command.

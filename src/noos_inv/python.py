@@ -81,6 +81,7 @@ def format(
             case FormatterType.ISORT:
                 ctx.run(cmd + f"isort {source}", pty=True)
             case FormatterType.RUFF:
+                ctx.run(cmd + f"ruff check --select I --fix {source}", pty=True)
                 ctx.run(cmd + f"ruff format {source}", pty=True)
             case _:
                 raise ValueError(f"Unexpected formatter {formatter}")
@@ -110,7 +111,7 @@ def lint(
             case LinterType.RUFF:
                 ctx.run(cmd + f"ruff check {source}", pty=True)
             case LinterType.IMPORTS:
-                ctx.run(cmd + f"lint-imports", pty=True)
+                ctx.run(cmd + "lint-imports", pty=True)
             case _:
                 raise ValueError(f"Unexpected linter {linter}")
 

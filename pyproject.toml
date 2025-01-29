@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "noos-inv"
-version = "0.2.0"
+version = "0.2.1"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 license = "MIT"
@@ -48,14 +48,13 @@ ipython = "*"
 [tool.ruff]
 line-length = 99
 src = ["src"]
-target-version = "py312"
 
 [tool.ruff.lint]
 ignore = [
     "D100", "D101", "D102", "D103", "D104", "D105", "D106", "D107", # Pydocstyle
     "F405", "W391", # Flake8
 ]
-select = ["E"]
+select = ["E", "I", "F"]
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2

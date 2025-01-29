@@ -40,7 +40,7 @@ class TestPythonFormat:
 
         python.format(ctx, source=source, install="pipenv")
 
-        assert test_run.call_count == 1
+        assert test_run.call_count == 2
         test_run.assert_called_with(cmd, pty=True)
 
 
