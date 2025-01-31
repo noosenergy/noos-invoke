@@ -46,7 +46,7 @@ The `noos-inv` package installs a CLI binary, for managing common CI/CD tasks.
 
 From the terminal,
 
-```
+```bash
 $ noosinv
 
 Usage: noosinv [--core-opts] <subcommand> [--subcommand-opts] ...
@@ -83,13 +83,11 @@ Source your environnement variables first for a seamless experience.
 
 ## Development
 
-On Mac OSX, make sure [poetry](https://python-poetry.org/) has been installed and pre-configured,
-
-    $ brew install poetry
+Make sure [poetry](https://python-poetry.org/) has been installed and pre-configured,
 
 This project is shipped with a Makefile, which is ready to do basic common tasks.
 
-```
+```bash
 $ make
 
 help                           Display this auto-generated help message
