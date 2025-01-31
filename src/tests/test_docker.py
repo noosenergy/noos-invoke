@@ -62,7 +62,7 @@ class TestDockerBuild:
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
     def test_fetch_command_correctly(self, test_run, ctx, image_context, image_file):
-        cmd = f"docker build --pull --file {image_file} " f"--tag test-image {image_context}"
+        cmd = f"docker build --pull --file {image_file} --tag test-image {image_context}"
 
         docker.build(ctx, name="test-image", context=image_context)
 

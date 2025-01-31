@@ -40,10 +40,7 @@ class TestHelmLogin:
         test_run.assert_called_with(cmd)
 
     def test_fetch_chartmuseum_command_correctly(self, test_run, ctx):
-        cmd = (
-            "helm repo add test-repo http://hostname "
-            "--username other_user --password test-token"
-        )
+        cmd = "helm repo add test-repo http://hostname --username other_user --password test-token"
 
         helm.login(
             ctx, repo="test-repo", url="http://hostname", user="other_user", token="test-token"
