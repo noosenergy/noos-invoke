@@ -22,6 +22,7 @@ clean:  ## Clean project from temp files / dirs
 	find src -type d -name __pycache__ | xargs rm -rf
 
 format:  ## Run auto-formatting linters
+	poetry run ruff check --select I --fix src
 	poetry run ruff format src
 
 
