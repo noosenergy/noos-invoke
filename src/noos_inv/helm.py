@@ -1,5 +1,3 @@
-from typing import List
-
 from invoke import Collection, Context, task
 
 from . import utils
@@ -63,7 +61,7 @@ def _cm_login(
 
 
 @task(iterable=["plugins"])
-def install(ctx: Context, plugins: List[str] | None = None) -> None:
+def install(ctx: Context, plugins: list[str] | None = None) -> None:
     """Provision local Helm client (Chart Museum Plugin)."""
     plugins = plugins or ctx.helm.plugins
     for plugin in plugins:
