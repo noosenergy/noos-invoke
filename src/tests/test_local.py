@@ -7,7 +7,7 @@ from noos_inv import local
 
 
 @pytest.fixture
-def ctx():
+def ctx() -> Context:
     return Context()
 
 

@@ -1,12 +1,12 @@
 import pytest
-from invoke import Config, context
+from invoke import Config, Context
 
 from noos_inv import terraform
 
 
 @pytest.fixture
-def ctx():
-    return context.Context(config=Config(defaults=terraform.CONFIG))
+def ctx() -> Context:
+    return Context(config=Config(defaults=terraform.CONFIG))
 
 
 class TestTerraformUpdate:

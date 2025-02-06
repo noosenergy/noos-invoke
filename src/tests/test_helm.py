@@ -1,14 +1,14 @@
 import tempfile
 
 import pytest
-from invoke import Config, context
+from invoke import Config, Context
 
 from noos_inv import helm, utils
 
 
 @pytest.fixture
-def ctx():
-    return context.Context(config=Config(defaults=helm.CONFIG))
+def ctx() -> Context:
+    return Context(config=Config(defaults=helm.CONFIG))
 
 
 @pytest.fixture
@@ -86,7 +86,7 @@ class TestHelmPush:
     def test_fetch_chartmuseum_command_correctly(self, test_run, chart):
         cfg = helm.CONFIG
         cfg["helm"]["user"] = "other_user"
-        ctx = context.Context(config=Config(defaults=cfg))
+        ctx = Context(config=Config(defaults=cfg))
         cmd = f"helm cm-push {chart} test-repo"
 
         helm.push(ctx, chart=chart, repo="test-repo")
@@ -96,7 +96,7 @@ class TestHelmPush:
     def test_fetch_chartmuseum_command_correctly_with_dry_run(self, test_run, chart):
         cfg = helm.CONFIG
         cfg["helm"]["user"] = "other_user"
-        ctx = context.Context(config=Config(defaults=cfg))
+        ctx = Context(config=Config(defaults=cfg))
         cmd = f"helm dependency update {chart}"
 
         helm.push(ctx, chart=chart, repo="test-repo", dry_run=True)
