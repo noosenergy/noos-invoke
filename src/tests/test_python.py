@@ -1,29 +1,38 @@
-import tempfile
+from collections.abc import Generator
 
 import pytest
-from invoke import Config, context
+from invoke import Config, Context
 
 from noos_inv import python, utils
 
 
 @pytest.fixture
-def ctx():
-    return context.Context(config=Config(defaults=python.CONFIG))
+def ctx() -> Context:
+    return Context(config=Config(defaults=python.CONFIG))
 
 
 @pytest.fixture
-def source():
-    with tempfile.TemporaryDirectory() as dir_name:
-        yield dir_name
+def source(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
 
 
-class TestInstallType:
-    def test_unknown_install_type_raises_error(self, ctx):
+@pytest.mark.parametrize(
+    "enum_class",
+    [
+        python.InstallType,
+        python.GroupType,
+        python.FormatterType,
+        python.LinterType,
+    ],
+)
+class TestValidatedEnum:
+    def test_unknown_install_type_raises_error(self, enum_class):
         with pytest.raises(AssertionError):
-            python.InstallType.get(ctx, "bad_install")
+            enum_class.get("bad_install")
 
-    def test_retrieve_default_install_correctly(self, ctx):
-        assert python.InstallType.get(ctx, None) == ctx.python.install
+    def test_retrieve_registered_install_correctly(self, enum_class):
+        for enum_type in enum_class:
+            assert enum_class.get(str(enum_type).lower()) == enum_type
 
 
 class TestPythonFormat:
@@ -32,7 +41,7 @@ class TestPythonFormat:
             python.format(ctx, source="bad_src")
 
     def test_unknown_formatter_type_raises_error(self, ctx, source):
-        with pytest.raises(ValueError):
+        with pytest.raises(AssertionError):
             python.format(ctx, source=source, formatters="bad_formatter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -41,7 +50,7 @@ class TestPythonFormat:
         python.format(ctx, source=source, install="pipenv")
 
         assert test_run.call_count == 2
-        test_run.assert_called_with(cmd, pty=True)
+        test_run.assert_called_with(cmd)
 
 
 class TestPythonLint:
@@ -50,7 +59,7 @@ class TestPythonLint:
             python.lint(ctx, source="bad_src")
 
     def test_unknown_linter_type_raises_error(self, ctx, source):
-        with pytest.raises(ValueError):
+        with pytest.raises(AssertionError):
             python.lint(ctx, source=source, linters="bad_linter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -72,10 +81,12 @@ class TestPythonTest:
         with pytest.raises(utils.PathNotFound):
             python.test(ctx, tests="bad_path", group=group)
 
-    def test_fetch_command_correctly(self, test_run, ctx, source):
-        cmd = f"pipenv run pytest {source}"
+    @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
+    def test_fetch_command_correctly(self, tmp_path, test_run, ctx, group):
+        (tmp_path / group).mkdir()
+        cmd = f"pipenv run pytest {tmp_path / group}"
 
-        python.test(ctx, tests=source, install="pipenv")
+        python.test(ctx, tests=tmp_path.as_posix(), group=group, install="pipenv")
 
         test_run.assert_called_with(cmd, pty=True)
 
@@ -117,13 +128,10 @@ class TestPythonRelease:
         with pytest.raises(AssertionError):
             python.release(ctx, user="test_user", token="test_token", install="bad_install")
 
-    def test_pipenv_release_raises_error(self, ctx):
-        with pytest.raises(NotImplementedError):
-            python.release(ctx, user="test_user", token="test_token", install="pipenv")
-
     @pytest.mark.parametrize(
         "install,cmd,pty",
         [
+            ("pipenv", "pipenv run twine upload dist/* -u test_user -p test_token", True),
             ("poetry", "poetry publish --build -u test_user -p test_token", True),
             ("uv", "uvx twine upload dist/* -u test_user -p test_token", False),
         ],

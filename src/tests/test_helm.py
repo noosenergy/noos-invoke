@@ -1,20 +1,19 @@
-import tempfile
+from collections.abc import Generator
 
 import pytest
-from invoke import Config, context
+from invoke import Config, Context
 
 from noos_inv import helm, utils
 
 
 @pytest.fixture
-def ctx():
-    return context.Context(config=Config(defaults=helm.CONFIG))
+def ctx() -> Context:
+    return Context(config=Config(defaults=helm.CONFIG))
 
 
 @pytest.fixture
-def chart():
-    with tempfile.TemporaryDirectory() as dir_name:
-        yield dir_name
+def chart(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
 
 
 class TestHelmLogin:
@@ -40,10 +39,7 @@ class TestHelmLogin:
         test_run.assert_called_with(cmd)
 
     def test_fetch_chartmuseum_command_correctly(self, test_run, ctx):
-        cmd = (
-            "helm repo add test-repo http://hostname "
-            "--username other_user --password test-token"
-        )
+        cmd = "helm repo add test-repo http://hostname --username other_user --password test-token"
 
         helm.login(
             ctx, repo="test-repo", url="http://hostname", user="other_user", token="test-token"
@@ -79,7 +75,7 @@ class TestHelmPush:
         with pytest.raises(utils.PathNotFound):
             helm.push(ctx, chart="bad_chart")
 
-    def test_fetch_aws_command_correctly(self, test_run, ctx, chart):
+    def test_fetch_aws_command_correctly(self, chart, test_run, ctx):
         cmd = "helm push chart-latest.tgz oci://test.repo/local/test"
 
         helm.push(ctx, chart=chart, repo="test.repo", name="local/test/chart", tag="latest")
@@ -89,7 +85,7 @@ class TestHelmPush:
     def test_fetch_chartmuseum_command_correctly(self, test_run, chart):
         cfg = helm.CONFIG
         cfg["helm"]["user"] = "other_user"
-        ctx = context.Context(config=Config(defaults=cfg))
+        ctx = Context(config=Config(defaults=cfg))
         cmd = f"helm cm-push {chart} test-repo"
 
         helm.push(ctx, chart=chart, repo="test-repo")
@@ -99,7 +95,7 @@ class TestHelmPush:
     def test_fetch_chartmuseum_command_correctly_with_dry_run(self, test_run, chart):
         cfg = helm.CONFIG
         cfg["helm"]["user"] = "other_user"
-        ctx = context.Context(config=Config(defaults=cfg))
+        ctx = Context(config=Config(defaults=cfg))
         cmd = f"helm dependency update {chart}"
 
         helm.push(ctx, chart=chart, repo="test-repo", dry_run=True)

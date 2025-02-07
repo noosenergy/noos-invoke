@@ -1,28 +1,26 @@
-import pathlib
-import tempfile
+from collections.abc import Generator
 
 import pytest
-from invoke import Config, context
+from invoke import Config, Context
 
 from noos_inv import docker, utils
 
 
 @pytest.fixture
-def ctx():
-    return context.Context(config=Config(defaults=docker.CONFIG))
+def ctx() -> Context:
+    return Context(config=Config(defaults=docker.CONFIG))
 
 
 @pytest.fixture
-def image_context():
-    with tempfile.TemporaryDirectory() as dir_name:
-        yield dir_name
+def image_context(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
 
 
 @pytest.fixture
-def image_file(image_context):
-    path = pathlib.Path(image_context) / "Dockerfile"
-    with path.open(mode="wt"):
-        yield str(path)
+def image_file(tmp_path) -> Generator[str, None, None]:
+    tmp_file = tmp_path / "Dockerfile"
+    tmp_file.write_text("FROM python:3.8")
+    yield tmp_file.as_posix()
 
 
 class TestDockerLogin:
@@ -62,7 +60,7 @@ class TestDockerBuild:
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
     def test_fetch_command_correctly(self, test_run, ctx, image_context, image_file):
-        cmd = f"docker build --pull --file {image_file} " f"--tag test-image {image_context}"
+        cmd = f"docker build --pull --file {image_file} --tag test-image {image_context}"
 
         docker.build(ctx, name="test-image", context=image_context)
 

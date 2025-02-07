@@ -1,5 +1,4 @@
 import os
-from typing import Tuple
 
 from invoke import Collection, Context, task
 
@@ -138,7 +137,7 @@ def buildx(
         ctx.run(cmd)
 
 
-def _get_build_context(ctx: Context, context: str | None, file: str | None) -> Tuple[str, str]:
+def _get_build_context(ctx: Context, context: str | None, file: str | None) -> tuple[str, str]:
     context = context or ctx.docker.context
     file = file or f"{context}/{ctx.docker.file}"
     utils.check_path(context)

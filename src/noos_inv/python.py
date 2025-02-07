@@ -1,4 +1,4 @@
-from enum import Enum, StrEnum, auto
+from enum import StrEnum, auto
 
 from invoke import Collection, Context, task
 
@@ -18,31 +18,32 @@ CONFIG = {
 }
 
 
-class InstallType(str, Enum):
-    poetry = "poetry"
-    pipenv = "pipenv"
-    uv = "uv"
-
+class ValidatedEnum(StrEnum):
     @classmethod
-    def get(cls, ctx: Context, value: str | None) -> str:
-        install = value or ctx.python.install
-        assert install in cls.__members__, f"Unknown Python installation {install}."
-        return install
+    def get(cls, value: str) -> StrEnum:
+        assert value in cls, f"Unknown {cls.__name__} {value}."
+        return cls(value)
 
 
-class GroupType(StrEnum):
-    unit = auto()
-    integration = auto()
-    functional = auto()
+class InstallType(ValidatedEnum):
+    PIPENV = auto()
+    POETRY = auto()
+    UV = auto()
 
 
-class FormatterType(StrEnum):
+class GroupType(ValidatedEnum):
+    UNIT = auto()
+    INTEGRATION = auto()
+    FUNCTIONAL = auto()
+
+
+class FormatterType(ValidatedEnum):
     BLACK = auto()
     ISORT = auto()
     RUFF = auto()
 
 
-class LinterType(StrEnum):
+class LinterType(ValidatedEnum):
     BLACK = auto()
     ISORT = auto()
     PYDOCSTYLE = auto()
@@ -65,39 +66,40 @@ def clean(ctx: Context) -> None:
 @task()
 def format(
     ctx: Context,
+    formatters: str | None = None,
     source: str | None = None,
     install: str | None = None,
-    formatters: str | None = None,
 ) -> None:
     """Auto-format source code."""
+    formatters = formatters or ctx.python.formatters
     source = source or ctx.python.source
     utils.check_path(source)
     cmd = _activate_shell(ctx, install)
-    list_formatters = formatters.split(",") if formatters else ctx.python.formatters.split(",")
-    for formatter in list_formatters:
-        match formatter:
+    for formatter in formatters.split(","):
+        match FormatterType.get(formatter):
             case FormatterType.BLACK:
                 ctx.run(cmd + f"black {source}", pty=True)
             case FormatterType.ISORT:
                 ctx.run(cmd + f"isort {source}", pty=True)
             case FormatterType.RUFF:
-                ctx.run(cmd + f"ruff check --select I --fix {source}", pty=True)
-                ctx.run(cmd + f"ruff format {source}", pty=True)
-            case _:
-                raise ValueError(f"Unexpected formatter {formatter}")
+                ctx.run(cmd + f"ruff check --select I --fix {source}")
+                ctx.run(cmd + f"ruff format {source}")
 
 
 @task()
 def lint(
-    ctx: Context, source: str | None = None, install: str | None = None, linters: str | None = None
+    ctx: Context,
+    linters: str | None = None,
+    source: str | None = None,
+    install: str | None = None,
 ) -> None:
     """Run python linters."""
+    linters = linters or ctx.python.linters
     source = source or ctx.python.source
     utils.check_path(source)
     cmd = _activate_shell(ctx, install)
-    list_linters = linters.split(",") if linters else ctx.python.linters.split(",")
-    for linter in list_linters:
-        match linter:
+    for linter in linters.split(","):
+        match LinterType.get(linter):
             case LinterType.BLACK:
                 ctx.run(cmd + f"black --check {source}", pty=True)
             case LinterType.ISORT:
@@ -109,11 +111,9 @@ def lint(
             case LinterType.MYPY:
                 ctx.run(cmd + f"mypy {source}", pty=True)
             case LinterType.RUFF:
-                ctx.run(cmd + f"ruff check {source}", pty=True)
+                ctx.run(cmd + f"ruff check {source}")
             case LinterType.IMPORTS:
                 ctx.run(cmd + "lint-imports", pty=True)
-            case _:
-                raise ValueError(f"Unexpected linter {linter}")
 
 
 @task()
@@ -123,8 +123,7 @@ def test(
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
     if group != "":
-        assert group in GroupType.__members__, f"Unknown py.test group {group}."
-        tests += "/" + group
+        tests += "/" + GroupType.get(group)
     utils.check_path(tests)
     cmd = _activate_shell(ctx, install)
     ctx.run(cmd + f"pytest {tests}", pty=True)
@@ -148,13 +147,14 @@ def coverage(
 @task()
 def package(ctx: Context, install: str | None = None) -> None:
     """Build project wheel distribution."""
-    install_type = InstallType.get(ctx, install)
-    if install_type == InstallType.poetry:
-        ctx.run("poetry build", pty=True)
-    if install_type == InstallType.pipenv:
-        ctx.run("pipenv run python -m build -n", pty=True)
-    if install_type == InstallType.uv:
-        ctx.run("uvx --from build pyproject-build --installer uv")
+    install = install or ctx.python.install
+    match InstallType.get(install):
+        case InstallType.POETRY:
+            ctx.run("poetry build", pty=True)
+        case InstallType.PIPENV:
+            ctx.run("pipenv run python -m build -n", pty=True)
+        case InstallType.UV:
+            ctx.run("uvx --from build pyproject-build --installer uv")
 
 
 @task()
@@ -164,20 +164,21 @@ def release(
     """Publish wheel distribution to PyPi."""
     user = user or ctx.python.user
     token = token or ctx.python.token
+    install = install or ctx.python.install
     assert user is not None, "Missing remote PyPi registry user."
     assert token is not None, "Missing remote PyPi registry token."
-    install_type = InstallType.get(ctx, install)
-    if install_type == InstallType.poetry:
-        ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)
-    if install_type == InstallType.pipenv:
-        raise NotImplementedError
-    if install_type == InstallType.uv:
-        ctx.run(f"uvx twine upload dist/* -u {user} -p {token}")
+    match InstallType.get(install):
+        case InstallType.POETRY:
+            ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)
+        case InstallType.PIPENV:
+            ctx.run(f"pipenv run twine upload dist/* -u {user} -p {token}", pty=True)
+        case InstallType.UV:
+            ctx.run(f"uvx twine upload dist/* -u {user} -p {token}")
 
 
 def _activate_shell(ctx: Context, install: str | None) -> str:
-    install_type = InstallType.get(ctx, install)
-    return f"{install_type} run "
+    install = install or ctx.python.install
+    return f"{InstallType.get(install)} run "
 
 
 ns = Collection("python")

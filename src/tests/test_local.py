@@ -1,4 +1,4 @@
-import tempfile
+from collections.abc import Generator
 
 import pytest
 from invoke import Context
@@ -7,14 +7,15 @@ from noos_inv import local
 
 
 @pytest.fixture
-def ctx():
+def ctx() -> Context:
     return Context()
 
 
 @pytest.fixture
-def dotenv():
-    with tempfile.NamedTemporaryFile(mode="w+t") as dir_file:
-        yield dir_file.name
+def dotenv(tmp_path) -> Generator[str, None, None]:
+    tmp_file = tmp_path / "dotenv.tmpl"
+    tmp_file.write_text("TEST=1")
+    yield tmp_file.as_posix()
 
 
 class TestDotEnv:
