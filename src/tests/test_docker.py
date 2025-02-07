@@ -1,5 +1,4 @@
-import pathlib
-import tempfile
+from collections.abc import Generator
 
 import pytest
 from invoke import Config, Context
@@ -13,16 +12,15 @@ def ctx() -> Context:
 
 
 @pytest.fixture
-def image_context():
-    with tempfile.TemporaryDirectory() as dir_name:
-        yield dir_name
+def image_context(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
 
 
 @pytest.fixture
-def image_file(image_context):
-    path = pathlib.Path(image_context) / "Dockerfile"
-    with path.open(mode="wt"):
-        yield str(path)
+def image_file(tmp_path) -> Generator[str, None, None]:
+    tmp_file = tmp_path / "Dockerfile"
+    tmp_file.write_text("FROM python:3.8")
+    yield tmp_file.as_posix()
 
 
 class TestDockerLogin:

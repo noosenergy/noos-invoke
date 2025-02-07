@@ -1,8 +1,8 @@
-import enum
 import pathlib
+from enum import StrEnum
 
 
-class UserType(str, enum.Enum):
+class UserType(StrEnum):
     AWS = "AWS"
 
 

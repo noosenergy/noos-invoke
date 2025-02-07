@@ -1,4 +1,4 @@
-import tempfile
+from collections.abc import Generator
 
 import pytest
 from invoke import Config, Context
@@ -12,9 +12,8 @@ def ctx() -> Context:
 
 
 @pytest.fixture
-def chart():
-    with tempfile.TemporaryDirectory() as dir_name:
-        yield dir_name
+def chart(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
 
 
 class TestHelmLogin:
@@ -76,7 +75,7 @@ class TestHelmPush:
         with pytest.raises(utils.PathNotFound):
             helm.push(ctx, chart="bad_chart")
 
-    def test_fetch_aws_command_correctly(self, test_run, ctx, chart):
+    def test_fetch_aws_command_correctly(self, chart, test_run, ctx):
         cmd = "helm push chart-latest.tgz oci://test.repo/local/test"
 
         helm.push(ctx, chart=chart, repo="test.repo", name="local/test/chart", tag="latest")
