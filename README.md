@@ -69,6 +69,7 @@ From the terminal,
     helm.push          Push Helm chart to a remote registry (AWS ECR or Chart Museum).
     helm.test          Test local deployment in Minikube.
     local.dotenv       Create local dotenv file.
+    local.ports        Forward ports for defined Kubernetes pods.
     python.clean       Clean project from temp files / dirs.
     python.coverage    Run coverage test report.
     python.format      Auto-format source code.
