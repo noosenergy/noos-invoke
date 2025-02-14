@@ -1,7 +1,7 @@
 import pathlib
 from collections.abc import Mapping
 from enum import StrEnum
-from typing import TypedDict
+from typing import NotRequired, TypedDict
 
 
 class UserType(StrEnum):
@@ -13,6 +13,7 @@ class PodConfig(TypedDict):
     podPrefix: str
     podPort: int
     localPort: int
+    localAddress: NotRequired[str]
 
 
 type PodsConfig = dict[str, PodConfig]
@@ -41,5 +42,5 @@ def check_schema(config: object) -> None:
     for item in config.values():
         if not isinstance(item, Mapping):
             raise ValidationError("Configuration element must be a mapping")
-        if set(item.keys()) != {"podNamespace", "podPrefix", "podPort", "localPort"}:
+        if not ({"podNamespace", "podPrefix", "podPort", "localPort"} <= set(item.keys())):
             raise ValidationError("Invalid configuration element keys")

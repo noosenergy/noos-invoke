@@ -27,14 +27,27 @@ class TestCheckSchema:
         with pytest.raises(utils.ValidationError):
             utils.check_schema(config)
 
-    def test_pass_silently_for_valid_schema(self):
-        config = {
-            "test": {
-                "podNamespace": "default",
-                "podPrefix": "test-",
-                "podPort": 80,
-                "localPort": 8080,
-            }
-        }
-
+    @pytest.mark.parametrize(
+        "config",
+        [
+            {
+                "test": {
+                    "podNamespace": "default",
+                    "podPrefix": "test-",
+                    "podPort": 80,
+                    "localPort": 8080,
+                }
+            },
+            {
+                "test": {
+                    "podNamespace": "default",
+                    "podPrefix": "test-",
+                    "podPort": 80,
+                    "localAddress": "0.0.0.0",
+                    "localPort": 8080,
+                }
+            },
+        ],
+    )
+    def test_pass_silently_for_valid_schema(self, config):
         utils.check_schema(config)

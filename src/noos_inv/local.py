@@ -101,19 +101,25 @@ def _filter_pods(ctx: Context, config: utils.PodsConfig) -> dict[str, str]:
     return selected_pods
 
 
-def _get_kubectl_command(namespace: str, name: str, port: int, local_port: int) -> str:
+def _get_kubectl_command(
+    *, namespace: str, name: str, port: int, local_port: int, local_address: str | None = None
+) -> str:
     """Get the command to forward a port to a pod."""
-    return f"kubectl port-forward -n {namespace} {name} {local_port}:{port}"
+    cmd = f"kubectl port-forward -n {namespace} {name} {local_port}:{port}"
+    if local_address is not None:
+        cmd += f" --address={local_address}"
+    return cmd
 
 
 def _forward(ctx: Context, config: utils.PodConfig, pod_name: str) -> None:
     """Forward port matching configuration."""
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(
-        config["podNamespace"],
-        pod_name,
-        config["podPort"],
-        config["localPort"],
+        namespace=config["podNamespace"],
+        name=pod_name,
+        port=config["podPort"],
+        local_port=config["localPort"],
+        local_address=config.get("localAddress"),
     )
     # Ensure the process is detached
     cmd += " </dev/null >/dev/null 2>&1 &"
@@ -125,10 +131,10 @@ def _unforward(ctx: Context, config: utils.PodConfig) -> None:
     """Unforward port matching configuration."""
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(
-        config["podNamespace"],
-        config["podPrefix"] + ".*",
-        config["podPort"],
-        config["localPort"],
+        namespace=config["podNamespace"],
+        name=config["podPrefix"] + ".*",
+        port=config["podPort"],
+        local_port=config["localPort"],
     )
     # Fetch running processes
     cmd = f"ps aux | grep '{cmd}' | grep -v grep"
