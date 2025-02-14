@@ -18,10 +18,14 @@ packages = [
 ]
 # Distribution
 classifiers = [
+    "Topic :: Software Development :: Build Tools",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
+    "Framework :: Invoke",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
