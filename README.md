@@ -69,6 +69,7 @@ From the terminal,
     helm.push          Push Helm chart to a remote registry (AWS ECR or Chart Museum).
     helm.test          Test local deployment in Minikube.
     local.dotenv       Create local dotenv file.
+    local.ports        Forward ports for defined Kubernetes pods.
     python.clean       Clean project from temp files / dirs.
     python.coverage    Run coverage test report.
     python.format      Auto-format source code.
@@ -85,6 +86,48 @@ Source your environnement variables first for a seamless experience.
 
     ```bash
     $ source .env
+    ```
+
+## Special note on K8S port-forwards
+
+Add the `NOOSINV_LOCAL_CONFIG` OS variable to your shell config, as the path to a local configuration file:
+
+    ```json
+    {
+        "podForwards": {
+            "pod_1": {
+                "podNamespace": "default",
+                "podPrefix": "service-1-",
+                "podPort": 80,
+                "localPort": 8000
+            },
+            "pod_2": {
+                "podNamespace": "test",
+                "podPrefix": "service-2-",
+                "podPort": 8080,
+                "localPort": 8000,
+                "localAddress": "0.0.0.0"
+            }
+        }
+    }
+    ```
+
+To start port forwarding a specific K8S cluster pod:
+
+    ```bash
+    $ noosinv local.ports -p pod_1
+    ```
+
+To kill all previous port forward processes:
+
+    ```bash
+    $ noosinv local.ports -u
+    ```
+
+Or previously opened port forward:
+
+    ```bash
+    $ noosinv local.ports -p pod_1 -u
     ```
 
 ## Development
