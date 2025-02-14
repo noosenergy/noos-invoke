@@ -24,7 +24,7 @@ class TestHelmLogin:
             ("http://hostname/", None),
         ],
     )
-    def test_no_chartmuseum_secrets_raise_error(self, url, token, ctx):
+    def test_raise_error_if_no_chartmuseum_secrets(self, url, token, ctx):
         with pytest.raises(AssertionError):
             helm.login(ctx, url=url, user="other_user", token=token)
 
@@ -58,7 +58,7 @@ class TestHelmInstall:
 
 
 class TestHelmLint:
-    def test_invalid_chart_raises_error(self, ctx):
+    def test_raise_error_if_invalid_chart(self, ctx):
         with pytest.raises(utils.PathNotFound):
             helm.lint(ctx, chart="bad_chart")
 
@@ -71,7 +71,7 @@ class TestHelmLint:
 
 
 class TestHelmPush:
-    def test_invalid_chart_raises_error(self, ctx):
+    def test_raise_error_if_invalid_chart(self, ctx):
         with pytest.raises(utils.PathNotFound):
             helm.push(ctx, chart="bad_chart")
 

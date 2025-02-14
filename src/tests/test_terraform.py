@@ -18,7 +18,7 @@ class TestTerraformUpdate:
             ("test-organisation", "test-workspace", None),
         ],
     )
-    def test_missing_secret_raises_error(self, organisation, workspace, token, ctx):
+    def test_raise_error_if_missing_secret(self, organisation, workspace, token, ctx):
         with pytest.raises(AssertionError):
             terraform.update(ctx, organisation=organisation, workspace=workspace, token=token)
 
@@ -49,7 +49,7 @@ class TestTerraformRun:
             ("test-organisation", "test-workspace", None),
         ],
     )
-    def test_missing_secret_raises_error(self, ctx, organisation, workspace, token):
+    def test_raise_error_if_missing_secret(self, ctx, organisation, workspace, token):
         with pytest.raises(AssertionError):
             terraform.run(ctx, organisation=organisation, workspace=workspace, token=token)
 
