@@ -21,7 +21,6 @@ classifiers = [
     "Topic :: Software Development :: Build Tools",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
-    "Framework :: Invoke",
     "License :: OSI Approved :: MIT License",
     "Environment :: Console",
     "Operating System :: MacOS",
