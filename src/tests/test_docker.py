@@ -24,11 +24,11 @@ def image_file(tmp_path) -> Generator[str, None, None]:
 
 
 class TestDockerLogin:
-    def test_no_aws_repo_raises_error(self, ctx):
+    def test_raise_error_if_no_aws_repo(self, ctx):
         with pytest.raises(AssertionError):
             docker.login(ctx, user="AWS")
 
-    def test_no_dockerhub_token_raises_error(self, ctx):
+    def test_raise_error_if_no_dockerhub_token(self, ctx):
         with pytest.raises(AssertionError):
             docker.login(ctx, user="other_user")
 
@@ -51,11 +51,11 @@ class TestDockerLogin:
 
 
 class TestDockerBuild:
-    def test_invalid_context_raises_error(self, ctx):
+    def test_raise_error_if_invalid_context(self, ctx):
         with pytest.raises(utils.PathNotFound):
             docker.build(ctx, context="bad_context")
 
-    def test_missing_environment_variable_raises_error(self, ctx, image_context, image_file):
+    def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
         with pytest.raises(AssertionError):
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
@@ -89,11 +89,11 @@ class TestDockerBuild:
 
 
 class TestDockerBuildx:
-    def test_invalid_context_raises_error(self, ctx):
+    def test_raise_error_if_invalid_context(self, ctx):
         with pytest.raises(utils.PathNotFound):
             docker.buildx(ctx, context="bad_context")
 
-    def test_missing_environment_variable_raises_error(self, ctx, image_context, image_file):
+    def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
         with pytest.raises(AssertionError):
             docker.buildx(ctx, context=image_context, arg="BAD_VARIABLE")
 

@@ -25,6 +25,7 @@ htmlcov
 
 # Poetry
 .venv
+.env
 
 # IDE
 .vscode

@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "noos-inv"
-version = "0.2.1"
+version = "0.2.2"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 license = "MIT"
@@ -18,10 +18,14 @@ packages = [
 ]
 # Distribution
 classifiers = [
+    "Topic :: Software Development :: Build Tools",
     "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
+    "Framework :: Invoke",
     "License :: OSI Approved :: MIT License",
-    "Operating System :: OS Independent",
+    "Environment :: Console",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]

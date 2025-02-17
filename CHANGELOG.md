@@ -124,3 +124,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.1] - 2025-01-29
 ### Changed
  - Amend ruff format command.
+
+## [0.2.2] - 2025-02-13
+### Changed
+ - Add local dev command to port forward kubernetes pods.
