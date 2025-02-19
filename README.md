@@ -61,6 +61,7 @@ From the terminal,
     docker.buildx      Build and push x-platform Docker image to a remote registry.
     docker.configure   Create and configure buildx builder for multi-platform.
     docker.login       Login to Docker remote registry (AWS ECR or Dockerhub).
+    docker.pull        Pull Docker image from a remote registry.
     docker.push        Push Docker image to a remote registry.
     git.config         Setup git credentials with a Github token.
     helm.install       Provision local Helm client (Chart Museum Plugin).

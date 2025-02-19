@@ -3,7 +3,8 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import helm, utils
+from noos_inv import exceptions
+from noos_inv.tasks import helm
 
 
 @pytest.fixture
@@ -25,7 +26,7 @@ class TestHelmLogin:
         ],
     )
     def test_raise_error_if_no_chartmuseum_secrets(self, url, token, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             helm.login(ctx, url=url, user="other_user", token=token)
 
     def test_fetch_aws_command_correctly(self, test_run, ctx):
@@ -59,7 +60,7 @@ class TestHelmInstall:
 
 class TestHelmLint:
     def test_raise_error_if_invalid_chart(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             helm.lint(ctx, chart="bad_chart")
 
     def test_fetch_command_correctly(self, test_run, ctx, chart):
@@ -72,7 +73,7 @@ class TestHelmLint:
 
 class TestHelmPush:
     def test_raise_error_if_invalid_chart(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             helm.push(ctx, chart="bad_chart")
 
     def test_fetch_aws_command_correctly(self, chart, test_run, ctx):

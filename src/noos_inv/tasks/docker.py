@@ -1,8 +1,8 @@
 import os
 
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import exceptions, types, validators
 
 
 CONFIG = {
@@ -33,7 +33,7 @@ def login(
 ) -> None:
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
-    if user == utils.UserType.AWS:
+    if user == types.UserType.AWS:
         _aws_login(ctx, repo)
     else:
         _dockerhub_login(ctx, user, token)
@@ -41,7 +41,8 @@ def login(
 
 def _aws_login(ctx: Context, repo: str | None) -> None:
     repo = repo or ctx.docker.repo
-    assert repo is not None, "Missing remote AWS ECR URL."
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote AWS ECR URL")
     cmd = "aws ecr get-login-password | "
     cmd += f"docker login --username AWS --password-stdin {repo}"
     ctx.run(cmd)
@@ -49,7 +50,8 @@ def _aws_login(ctx: Context, repo: str | None) -> None:
 
 def _dockerhub_login(ctx: Context, user: str, token: str | None) -> None:
     token = token or ctx.docker.token
-    assert token is not None, "Missing remote Dockerhub token."
+    if token is None:
+        raise exceptions.UndefinedVariable("Missing remote Dockerhub token")
     ctx.run(f"docker login --username {user} --password {token}")
 
 
@@ -77,6 +79,27 @@ def build(
     ctx.run(cmd)
 
 
+@task(help={"keep-source": "Whether to keep the source Docker image (full long name)"})
+def pull(
+    ctx: Context,
+    repo: str | None = None,
+    name: str | None = None,
+    tag: str = "latest",
+    keep_source: bool = False,
+) -> None:
+    """Pull Docker image from a remote registry."""
+    repo = repo or ctx.docker.repo
+    name = name or ctx.docker.name
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote Docker registry URL")
+    # ALWAYS pull latest image unless specified
+    target_name = f"{repo}/{name}:{tag}"
+    ctx.run(f"docker pull {target_name}")
+    if not keep_source:
+        ctx.run(f"docker tag {target_name} {name}")
+        ctx.run(f"docker image rm {target_name}")
+
+
 @task(
     help={
         "tag-only": "Whether to not tag the Docker image as latest",
@@ -95,6 +118,8 @@ def push(
     repo = repo or ctx.docker.repo
     name = name or ctx.docker.name
     tag = tag or ctx.docker.tag
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote Docker registry URL")
     tag_list = [tag] if tag_only else [tag, "latest"]
     for t in tag_list:
         target_name = f"{repo}/{name}:{t}"
@@ -140,8 +165,8 @@ def buildx(
 def _get_build_context(ctx: Context, context: str | None, file: str | None) -> tuple[str, str]:
     context = context or ctx.docker.context
     file = file or f"{context}/{ctx.docker.file}"
-    utils.check_path(context)
-    utils.check_path(file)
+    validators.check_path(context)
+    validators.check_path(file)
     return (context, file)
 
 
@@ -149,15 +174,7 @@ def _get_build_arg_fragment(ctx: Context, arg: str | None) -> str:
     arg = arg or ctx.docker.arg
     cmd = ""
     if arg is not None:
-        assert arg in os.environ, f"Missing environment variable {arg}."
+        if arg not in os.environ:
+            raise exceptions.UndefinedVariable(f"Missing environment variable {arg}")
         cmd += f"--build-arg {arg}={os.environ[arg]} "
     return cmd
-
-
-ns = Collection("docker")
-ns.configure(CONFIG)
-ns.add_task(login)
-ns.add_task(configure)
-ns.add_task(build)
-ns.add_task(buildx)
-ns.add_task(push)

@@ -3,7 +3,8 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import python, utils
+from noos_inv import exceptions
+from noos_inv.tasks import python
 
 
 @pytest.fixture
@@ -16,32 +17,13 @@ def source(tmp_path) -> Generator[str, None, None]:
     yield tmp_path.as_posix()
 
 
-@pytest.mark.parametrize(
-    "enum_class",
-    [
-        python.InstallType,
-        python.GroupType,
-        python.FormatterType,
-        python.LinterType,
-    ],
-)
-class TestValidatedEnum:
-    def test_raise_error_for_unknown_install(self, enum_class):
-        with pytest.raises(AssertionError):
-            enum_class.get("bad_install")
-
-    def test_retrieve_registered_install_correctly(self, enum_class):
-        for enum_type in enum_class:
-            assert enum_class.get(str(enum_type).lower()) == enum_type
-
-
 class TestPythonFormat:
     def test_raise_error_if_invalid_source(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             python.format(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_formatter_type(self, ctx, source):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.format(ctx, source=source, formatters="bad_formatter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -55,11 +37,11 @@ class TestPythonFormat:
 
 class TestPythonLint:
     def test_raise_error_if_invalid_source(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             python.lint(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_linter_type(self, ctx, source):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.lint(ctx, source=source, linters="bad_linter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -73,12 +55,12 @@ class TestPythonLint:
 
 class TestPythonTest:
     def test_raise_error_if_incorrect_group(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.test(ctx, group="bad_group")
 
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
     def test_raise_error_if_invalid_source(self, group, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             python.test(ctx, tests="bad_path", group=group)
 
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
@@ -93,7 +75,7 @@ class TestPythonTest:
 
 class TestPythonPackage:
     def test_raise_error_if_unknown_install_type(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.package(ctx, install="bad_install")
 
     @pytest.mark.parametrize(
@@ -121,11 +103,11 @@ class TestPythonRelease:
         ],
     )
     def test_raise_error_if_missing_secret(self, user, token, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.release(ctx, user=user, token=token)
 
     def test_raise_error_if_unknown_install_type(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.release(ctx, user="test_user", token="test_token", install="bad_install")
 
     @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import exceptions, types, validators
 
 
 CONFIG = {
@@ -34,7 +34,7 @@ def login(
     """Login to Helm remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     user = user or ctx.helm.user
-    if user == utils.UserType.AWS:
+    if user == types.UserType.AWS:
         _aws_login(ctx, repo)
     else:
         _cm_login(ctx, user, repo, url, token)
@@ -55,8 +55,10 @@ def _cm_login(
 ) -> None:
     url = url or ctx.helm.url
     token = token or ctx.helm.token
-    assert url is not None, "Missing remote Helm registry url."
-    assert token is not None, "Missing remote Helm registry token."
+    if url is None:
+        raise exceptions.UndefinedVariable("Missing remote Helm registry url")
+    if token is None:
+        raise exceptions.UndefinedVariable("Missing remote Helm registry token")
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}")
 
 
@@ -72,7 +74,7 @@ def install(ctx: Context, plugins: list[str] | None = None) -> None:
 def lint(ctx: Context, chart=None) -> None:
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
-    utils.check_path(chart)
+    validators.check_path(chart)
     ctx.run(f"helm lint {chart}")
 
 
@@ -89,8 +91,8 @@ def test(
     """Test local deployment in Minikube."""
     chart = chart or ctx.helm.chart
     values = values or ctx.helm.values
-    utils.check_path(chart)
-    utils.check_path(values)
+    validators.check_path(chart)
+    validators.check_path(values)
     cmd = f"helm install {release} {chart} --values {values} "
     cmd += f"--create-namespace --namespace {namespace} --kube-context {context}"
     if dry_run:
@@ -110,8 +112,8 @@ def push(
     """Push Helm chart to a remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     chart = chart or ctx.helm.chart
-    utils.check_path(chart)
-    if ctx.helm.user == utils.UserType.AWS:
+    validators.check_path(chart)
+    if ctx.helm.user == types.UserType.AWS:
         _aws_push(ctx, chart, repo, name, tag, dry_run)
     else:
         _cm_push(ctx, chart, repo, dry_run)
@@ -137,12 +139,3 @@ def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
     ctx.run(f"helm dependency update {chart}")
     if not dry_run:
         ctx.run(f"helm cm-push {chart} {repo}")
-
-
-ns = Collection("helm")
-ns.configure(CONFIG)
-ns.add_task(login)
-ns.add_task(install)
-ns.add_task(lint)
-ns.add_task(test)
-ns.add_task(push)

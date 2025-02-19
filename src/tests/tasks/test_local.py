@@ -4,7 +4,8 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import local, utils
+from noos_inv import exceptions, types
+from noos_inv.tasks import local
 
 
 @pytest.fixture
@@ -20,7 +21,7 @@ def dotenv(tmp_path) -> Generator[str, None, None]:
 
 
 @pytest.fixture
-def pods_config() -> utils.PodsConfig:
+def pods_config() -> types.PodsConfig:
     return {
         "test1": {
             "podNamespace": "default",
@@ -72,25 +73,25 @@ class TestDotEnv:
 
 class TestPorts:
     def test_raise_error_if_missing_config(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             local.ports(ctx)
 
     def test_raise_error_if_unknown_config(self, tmp_path, ctx):
         config = tmp_path / "config.json"
 
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             local.ports(ctx, config=config.as_posix())
 
     def test_raise_error_if_incorrect_config(self, tmp_path, ctx):
         config = tmp_path / "config.json"
         config.write_text('{"podForwards": "test"}')
 
-        with pytest.raises(utils.ValidationError):
+        with pytest.raises(exceptions.InvalidConfig):
             local.ports(ctx, config=config.as_posix())
 
     @pytest.mark.parametrize("unforward", [False, True])
     def test_raise_error_if_missing_pod(self, mocker, ctx, config, unforward):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             local.ports(ctx, config=config, pod="test", unforward=unforward)
 
     @pytest.mark.parametrize("unforward", [False, True])

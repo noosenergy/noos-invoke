@@ -5,7 +5,7 @@ build-backend = "poetry.masonry.api"
 [tool.poetry]
 # Description
 name = "noos-inv"
-version = "0.2.2"
+version = "0.2.3"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 license = "MIT"
@@ -30,7 +30,7 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-noosinv = "noos_inv:main.run"
+noosinv = "noos_inv.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"

@@ -128,3 +128,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.2] - 2025-02-13
 ### Changed
  - Add local dev command to port forward kubernetes pods.
+
+## [0.2.3] - 2025-02-19
+### Added
+ - Add docker.pull as a convience and symmetry command to docker.push.
+### Changed
+ - Refactor entire repositories into modular composable components.

@@ -3,7 +3,8 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import docker, utils
+from noos_inv import exceptions
+from noos_inv.tasks import docker
 
 
 @pytest.fixture
@@ -25,11 +26,11 @@ def image_file(tmp_path) -> Generator[str, None, None]:
 
 class TestDockerLogin:
     def test_raise_error_if_no_aws_repo(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.login(ctx, user="AWS")
 
     def test_raise_error_if_no_dockerhub_token(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.login(ctx, user="other_user")
 
     def test_fetch_aws_command_correctly(self, test_run, ctx):
@@ -52,11 +53,11 @@ class TestDockerLogin:
 
 class TestDockerBuild:
     def test_raise_error_if_invalid_context(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             docker.build(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
     def test_fetch_command_correctly(self, test_run, ctx, image_context, image_file):
@@ -90,11 +91,11 @@ class TestDockerBuild:
 
 class TestDockerBuildx:
     def test_raise_error_if_invalid_context(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             docker.buildx(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.buildx(ctx, context=image_context, arg="BAD_VARIABLE")
 
     @pytest.mark.parametrize("image_platfom", ["linux/arm64", "linux/arm64,linux/amd64"])
@@ -118,7 +119,33 @@ class TestDockerBuildx:
         test_run.assert_called_with(cmd)
 
 
+class TestDockerPull:
+    def test_raise_error_if_no_registry(self, ctx):
+        with pytest.raises(exceptions.UndefinedVariable):
+            docker.pull(ctx, name="test-image")
+
+    def test_fetch_command_correctly(self, test_run, ctx):
+        docker.pull(ctx, repo="test-repo", name="test-image")
+
+        assert test_run.call_count == 3
+        test_run.call_args_list == [
+            "docker pull test-repo/test-image:latest",
+            "docker tag test-repo/test-image:latest test-image",
+            "docker image rm test-repo/test-image:latest",
+        ]
+
+    def test_fetch_source_only_command_correctly(self, test_run, ctx):
+        docker.pull(ctx, repo="test-repo", name="test-image", tag=1.0, keep_source=True)
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with("docker pull test-repo/test-image:1.0")
+
+
 class TestDockerPush:
+    def test_raise_error_if_no_registry(self, ctx):
+        with pytest.raises(exceptions.UndefinedVariable):
+            docker.push(ctx, name="test-image")
+
     def test_fetch_command_correctly(self, test_run, ctx):
         cmd = "docker push test-repo/test-image:latest"
 
