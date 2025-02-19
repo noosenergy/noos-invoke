@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import utils
+from noos_inv import validators
 from noos_inv.tasks import python
 
 
@@ -38,7 +38,7 @@ class TestValidatedEnum:
 
 class TestPythonFormat:
     def test_raise_error_if_invalid_source(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(validators.PathNotFound):
             python.format(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_formatter_type(self, ctx, source):
@@ -56,7 +56,7 @@ class TestPythonFormat:
 
 class TestPythonLint:
     def test_raise_error_if_invalid_source(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(validators.PathNotFound):
             python.lint(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_linter_type(self, ctx, source):
@@ -79,7 +79,7 @@ class TestPythonTest:
 
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
     def test_raise_error_if_invalid_source(self, group, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(validators.PathNotFound):
             python.test(ctx, tests="bad_path", group=group)
 
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])

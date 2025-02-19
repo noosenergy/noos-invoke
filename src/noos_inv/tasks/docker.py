@@ -2,7 +2,7 @@ import os
 
 from invoke import Context, task
 
-from noos_inv import utils
+from noos_inv import types, validators
 
 
 CONFIG = {
@@ -33,7 +33,7 @@ def login(
 ) -> None:
     """Login to Docker remote registry (AWS ECR or Dockerhub)."""
     user = user or ctx.docker.user
-    if user == utils.UserType.AWS:
+    if user == types.UserType.AWS:
         _aws_login(ctx, repo)
     else:
         _dockerhub_login(ctx, user, token)
@@ -140,8 +140,8 @@ def buildx(
 def _get_build_context(ctx: Context, context: str | None, file: str | None) -> tuple[str, str]:
     context = context or ctx.docker.context
     file = file or f"{context}/{ctx.docker.file}"
-    utils.check_path(context)
-    utils.check_path(file)
+    validators.check_path(context)
+    validators.check_path(file)
     return (context, file)
 
 

@@ -4,7 +4,7 @@ import pathlib
 
 from invoke import Context, task
 
-from noos_inv import utils
+from noos_inv import types, validators
 
 
 logger = logging.getLogger(__name__)
@@ -29,12 +29,12 @@ def dotenv(
     force: bool = False,
 ) -> None:
     """Create local dotenv file."""
-    utils.check_path(template)
+    validators.check_path(template)
     try:
-        utils.check_path(target)
+        validators.check_path(target)
         if force:
-            raise utils.PathNotFound
-    except utils.PathNotFound:
+            raise validators.PathNotFound
+    except validators.PathNotFound:
         ctx.run(f"cp {template} {target}")
 
 
@@ -55,12 +55,12 @@ def ports(
     config = config or ctx.local.config
     assert config is not None, "Missing local config file."
     # Load config file
-    utils.check_path(config)
+    validators.check_path(config)
     with pathlib.Path(config).open(mode="rt") as f:
-        local_config: utils.PodsConfig = json.load(f).get("podForwards")
-    utils.check_schema(local_config)
+        local_config: types.PodsConfig = json.load(f).get("podForwards")
+    validators.check_schema(local_config)
     # Narrow-down config if necessary
-    tmp_config: utils.PodsConfig
+    tmp_config: types.PodsConfig
     if pod is None:
         tmp_config = local_config
     else:
@@ -77,7 +77,7 @@ def ports(
             _forward(ctx, pod_config, filtered_pods[pod])
 
 
-def _filter_pods(ctx: Context, config: utils.PodsConfig) -> dict[str, str]:
+def _filter_pods(ctx: Context, config: types.PodsConfig) -> dict[str, str]:
     """Filter all matching pods in a given namespace."""
     # Query all pods in the namespace
     cmd_tpl = "kubectl get pod -n {namespace} "
@@ -111,7 +111,7 @@ def _get_kubectl_command(
     return cmd
 
 
-def _forward(ctx: Context, config: utils.PodConfig, pod_name: str) -> None:
+def _forward(ctx: Context, config: types.PodConfig, pod_name: str) -> None:
     """Forward port matching configuration."""
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(
@@ -127,7 +127,7 @@ def _forward(ctx: Context, config: utils.PodConfig, pod_name: str) -> None:
     ctx.run(cmd, warn=True, hide=True)
 
 
-def _unforward(ctx: Context, config: utils.PodConfig) -> None:
+def _unforward(ctx: Context, config: types.PodConfig) -> None:
     """Unforward port matching configuration."""
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(

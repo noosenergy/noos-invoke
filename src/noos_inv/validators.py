@@ -1,22 +1,5 @@
 import pathlib
 from collections.abc import Mapping
-from enum import StrEnum
-from typing import NotRequired, TypedDict
-
-
-class UserType(StrEnum):
-    AWS = "AWS"
-
-
-class PodConfig(TypedDict):
-    podNamespace: str
-    podPrefix: str
-    podPort: int
-    localPort: int
-    localAddress: NotRequired[str]
-
-
-type PodsConfig = dict[str, PodConfig]
 
 
 class PathNotFound(Exception):

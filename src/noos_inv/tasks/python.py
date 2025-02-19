@@ -2,7 +2,7 @@ from enum import StrEnum, auto
 
 from invoke import Context, task
 
-from noos_inv import utils
+from noos_inv import validators
 
 
 CONFIG = {
@@ -73,7 +73,7 @@ def format(
     """Auto-format source code."""
     formatters = formatters or ctx.python.formatters
     source = source or ctx.python.source
-    utils.check_path(source)
+    validators.check_path(source)
     cmd = _activate_shell(ctx, install)
     for formatter in formatters.split(","):
         match FormatterType.get(formatter):
@@ -96,7 +96,7 @@ def lint(
     """Run python linters."""
     linters = linters or ctx.python.linters
     source = source or ctx.python.source
-    utils.check_path(source)
+    validators.check_path(source)
     cmd = _activate_shell(ctx, install)
     for linter in linters.split(","):
         match LinterType.get(linter):
@@ -124,7 +124,7 @@ def test(
     tests = tests or ctx.python.tests
     if group != "":
         tests += "/" + GroupType.get(group)
-    utils.check_path(tests)
+    validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
     ctx.run(cmd + f"pytest {tests}", pty=True)
 
@@ -139,7 +139,7 @@ def coverage(
 ) -> None:
     """Run coverage test report."""
     tests = tests or ctx.python.tests
-    utils.check_path(tests)
+    validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
     ctx.run(cmd + f"pytest --cov --cov-config={config} --cov-report={report} {tests}", pty=True)
 

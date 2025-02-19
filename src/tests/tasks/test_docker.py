@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import utils
+from noos_inv import validators
 from noos_inv.tasks import docker
 
 
@@ -53,7 +53,7 @@ class TestDockerLogin:
 
 class TestDockerBuild:
     def test_raise_error_if_invalid_context(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(validators.PathNotFound):
             docker.build(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
@@ -91,7 +91,7 @@ class TestDockerBuild:
 
 class TestDockerBuildx:
     def test_raise_error_if_invalid_context(self, ctx):
-        with pytest.raises(utils.PathNotFound):
+        with pytest.raises(validators.PathNotFound):
             docker.buildx(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
