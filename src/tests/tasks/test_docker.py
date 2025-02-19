@@ -119,7 +119,33 @@ class TestDockerBuildx:
         test_run.assert_called_with(cmd)
 
 
+class TestDockerPull:
+    def test_raise_error_if_no_registry(self, ctx):
+        with pytest.raises(exceptions.UndefinedVariable):
+            docker.pull(ctx, name="test-image")
+
+    def test_fetch_command_correctly(self, test_run, ctx):
+        docker.pull(ctx, repo="test-repo", name="test-image")
+
+        assert test_run.call_count == 3
+        test_run.call_args_list == [
+            "docker pull test-repo/test-image:latest",
+            "docker tag test-repo/test-image:latest test-image",
+            "docker image rm test-repo/test-image:latest",
+        ]
+
+    def test_fetch_source_only_command_correctly(self, test_run, ctx):
+        docker.pull(ctx, repo="test-repo", name="test-image", tag=1.0, keep_source=True)
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with("docker pull test-repo/test-image:1.0")
+
+
 class TestDockerPush:
+    def test_raise_error_if_no_registry(self, ctx):
+        with pytest.raises(exceptions.UndefinedVariable):
+            docker.push(ctx, name="test-image")
+
     def test_fetch_command_correctly(self, test_run, ctx):
         cmd = "docker push test-repo/test-image:latest"
 

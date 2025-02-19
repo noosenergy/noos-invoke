@@ -79,6 +79,27 @@ def build(
     ctx.run(cmd)
 
 
+@task(help={"keep-source": "Whether to keep the source Docker image (full long name)"})
+def pull(
+    ctx: Context,
+    repo: str | None = None,
+    name: str | None = None,
+    tag: str = "latest",
+    keep_source: bool = False,
+) -> None:
+    """Pull Docker image from a remote registry."""
+    repo = repo or ctx.docker.repo
+    name = name or ctx.docker.name
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote Docker registry URL")
+    # ALWAYS pull latest image unless specified
+    target_name = f"{repo}/{name}:{tag}"
+    ctx.run(f"docker pull {target_name}")
+    if not keep_source:
+        ctx.run(f"docker tag {target_name} {name}")
+        ctx.run(f"docker image rm {target_name}")
+
+
 @task(
     help={
         "tag-only": "Whether to not tag the Docker image as latest",
@@ -97,6 +118,8 @@ def push(
     repo = repo or ctx.docker.repo
     name = name or ctx.docker.name
     tag = tag or ctx.docker.tag
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote Docker registry URL")
     tag_list = [tag] if tag_only else [tag, "latest"]
     for t in tag_list:
         target_name = f"{repo}/{name}:{t}"
