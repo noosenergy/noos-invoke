@@ -1,29 +1,23 @@
 import pathlib
 from collections.abc import Mapping
 
-
-class PathNotFound(Exception):
-    pass
-
-
-class ValidationError(Exception):
-    pass
+from noos_inv import exceptions, types
 
 
 def check_path(path: str) -> None:
     """Check whether a path exists on a file system."""
     if not pathlib.Path(path).exists():
-        raise PathNotFound(f"Incorrect file system path: {path}")
+        raise exceptions.PathNotFound(f"Incorrect file system path: {path}")
 
 
-def check_schema(config: object) -> None:
+def check_config(config: object) -> None:
     """Check whether a port-forward configuration is valid."""
     if not isinstance(config, Mapping):
-        raise ValidationError("Configuration must be an mapping")
+        raise exceptions.InvalidConfig("Configuration must be an mapping")
     if len(config) == 0:
-        raise ValidationError("Configuration can not be empty")
+        raise exceptions.InvalidConfig("Configuration can not be empty")
     for item in config.values():
         if not isinstance(item, Mapping):
-            raise ValidationError("Configuration element must be a mapping")
-        if not ({"podNamespace", "podPrefix", "podPort", "localPort"} <= set(item.keys())):
-            raise ValidationError("Invalid configuration element keys")
+            raise exceptions.InvalidConfig("Configuration element must be a mapping")
+        if not (types.PodConfig.__required_keys__ <= set(item.keys())):
+            raise exceptions.InvalidConfig("Invalid configuration element keys")

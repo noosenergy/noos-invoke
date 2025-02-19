@@ -3,7 +3,7 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import validators
+from noos_inv import exceptions
 from noos_inv.tasks import helm
 
 
@@ -60,7 +60,7 @@ class TestHelmInstall:
 
 class TestHelmLint:
     def test_raise_error_if_invalid_chart(self, ctx):
-        with pytest.raises(validators.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             helm.lint(ctx, chart="bad_chart")
 
     def test_fetch_command_correctly(self, test_run, ctx, chart):
@@ -73,7 +73,7 @@ class TestHelmLint:
 
 class TestHelmPush:
     def test_raise_error_if_invalid_chart(self, ctx):
-        with pytest.raises(validators.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             helm.push(ctx, chart="bad_chart")
 
     def test_fetch_aws_command_correctly(self, chart, test_run, ctx):

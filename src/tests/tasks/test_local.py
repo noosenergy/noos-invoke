@@ -4,7 +4,7 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import types, validators
+from noos_inv import exceptions, types
 from noos_inv.tasks import local
 
 
@@ -79,14 +79,14 @@ class TestPorts:
     def test_raise_error_if_unknown_config(self, tmp_path, ctx):
         config = tmp_path / "config.json"
 
-        with pytest.raises(validators.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             local.ports(ctx, config=config.as_posix())
 
     def test_raise_error_if_incorrect_config(self, tmp_path, ctx):
         config = tmp_path / "config.json"
         config.write_text('{"podForwards": "test"}')
 
-        with pytest.raises(validators.ValidationError):
+        with pytest.raises(exceptions.InvalidConfig):
             local.ports(ctx, config=config.as_posix())
 
     @pytest.mark.parametrize("unforward", [False, True])

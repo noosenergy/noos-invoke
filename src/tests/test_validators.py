@@ -1,11 +1,11 @@
 import pytest
 
-from noos_inv import validators
+from noos_inv import exceptions, validators
 
 
 class TestCheckPath:
     def test_raise_error_if_invalid_path(self):
-        with pytest.raises(validators.PathNotFound):
+        with pytest.raises(exceptions.PathNotFound):
             validators.check_path("invalid/path")
 
     def test_pass_silently_for_valid_path(self, tmp_path):
@@ -24,8 +24,8 @@ class TestCheckSchema:
         ],
     )
     def test_raise_error_if_invalid_schema(self, config):
-        with pytest.raises(validators.ValidationError):
-            validators.check_schema(config)
+        with pytest.raises(exceptions.InvalidConfig):
+            validators.check_config(config)
 
     @pytest.mark.parametrize(
         "config",
@@ -50,4 +50,4 @@ class TestCheckSchema:
         ],
     )
     def test_pass_silently_for_valid_schema(self, config):
-        validators.check_schema(config)
+        validators.check_config(config)

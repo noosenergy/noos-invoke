@@ -4,7 +4,7 @@ import pathlib
 
 from invoke import Context, task
 
-from noos_inv import types, validators
+from noos_inv import exceptions, types, validators
 
 
 logger = logging.getLogger(__name__)
@@ -33,8 +33,8 @@ def dotenv(
     try:
         validators.check_path(target)
         if force:
-            raise validators.PathNotFound
-    except validators.PathNotFound:
+            raise exceptions.PathNotFound
+    except exceptions.PathNotFound:
         ctx.run(f"cp {template} {target}")
 
 
@@ -58,7 +58,7 @@ def ports(
     validators.check_path(config)
     with pathlib.Path(config).open(mode="rt") as f:
         local_config: types.PodsConfig = json.load(f).get("podForwards")
-    validators.check_schema(local_config)
+    validators.check_config(local_config)
     # Narrow-down config if necessary
     tmp_config: types.PodsConfig
     if pod is None:
