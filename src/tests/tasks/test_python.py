@@ -17,25 +17,6 @@ def source(tmp_path) -> Generator[str, None, None]:
     yield tmp_path.as_posix()
 
 
-@pytest.mark.parametrize(
-    "enum_class",
-    [
-        python.InstallType,
-        python.GroupType,
-        python.FormatterType,
-        python.LinterType,
-    ],
-)
-class TestValidatedEnum:
-    def test_raise_error_for_unknown_install(self, enum_class):
-        with pytest.raises(AssertionError):
-            enum_class.get("bad_install")
-
-    def test_retrieve_registered_install_correctly(self, enum_class):
-        for enum_type in enum_class:
-            assert enum_class.get(str(enum_type).lower()) == enum_type
-
-
 class TestPythonFormat:
     def test_raise_error_if_invalid_source(self, ctx):
         with pytest.raises(validators.PathNotFound):

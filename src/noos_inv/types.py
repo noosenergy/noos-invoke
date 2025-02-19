@@ -1,4 +1,4 @@
-from enum import StrEnum
+from enum import StrEnum, auto
 from typing import NotRequired, TypedDict
 
 
@@ -13,5 +13,42 @@ class PodConfig(TypedDict):
 type PodsConfig = dict[str, PodConfig]
 
 
+class ValidatedEnum(StrEnum):
+    """Specific Enum with a validated getter method."""
+
+    @classmethod
+    def get(cls, value: str) -> StrEnum:
+        assert value in cls, f"Unknown {cls.__name__} {value}."
+        return cls(value)
+
+
 class UserType(StrEnum):
     AWS = "AWS"
+
+
+class InstallType(ValidatedEnum):
+    PIPENV = auto()
+    POETRY = auto()
+    UV = auto()
+
+
+class GroupType(ValidatedEnum):
+    UNIT = auto()
+    INTEGRATION = auto()
+    FUNCTIONAL = auto()
+
+
+class FormatterType(ValidatedEnum):
+    BLACK = auto()
+    ISORT = auto()
+    RUFF = auto()
+
+
+class LinterType(ValidatedEnum):
+    BLACK = auto()
+    ISORT = auto()
+    PYDOCSTYLE = auto()
+    FLAKE8 = auto()
+    RUFF = auto()
+    MYPY = auto()
+    IMPORTS = auto()

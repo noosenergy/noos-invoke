@@ -1,8 +1,6 @@
-from enum import StrEnum, auto
-
 from invoke import Context, task
 
-from noos_inv import validators
+from noos_inv import types, validators
 
 
 CONFIG = {
@@ -16,41 +14,6 @@ CONFIG = {
         "token": None,
     }
 }
-
-
-class ValidatedEnum(StrEnum):
-    @classmethod
-    def get(cls, value: str) -> StrEnum:
-        assert value in cls, f"Unknown {cls.__name__} {value}."
-        return cls(value)
-
-
-class InstallType(ValidatedEnum):
-    PIPENV = auto()
-    POETRY = auto()
-    UV = auto()
-
-
-class GroupType(ValidatedEnum):
-    UNIT = auto()
-    INTEGRATION = auto()
-    FUNCTIONAL = auto()
-
-
-class FormatterType(ValidatedEnum):
-    BLACK = auto()
-    ISORT = auto()
-    RUFF = auto()
-
-
-class LinterType(ValidatedEnum):
-    BLACK = auto()
-    ISORT = auto()
-    PYDOCSTYLE = auto()
-    FLAKE8 = auto()
-    RUFF = auto()
-    MYPY = auto()
-    IMPORTS = auto()
 
 
 # Python deployment workflow
@@ -76,12 +39,12 @@ def format(
     validators.check_path(source)
     cmd = _activate_shell(ctx, install)
     for formatter in formatters.split(","):
-        match FormatterType.get(formatter):
-            case FormatterType.BLACK:
+        match types.FormatterType.get(formatter):
+            case types.FormatterType.BLACK:
                 ctx.run(cmd + f"black {source}", pty=True)
-            case FormatterType.ISORT:
+            case types.FormatterType.ISORT:
                 ctx.run(cmd + f"isort {source}", pty=True)
-            case FormatterType.RUFF:
+            case types.FormatterType.RUFF:
                 ctx.run(cmd + f"ruff check --select I --fix {source}")
                 ctx.run(cmd + f"ruff format {source}")
 
@@ -99,20 +62,20 @@ def lint(
     validators.check_path(source)
     cmd = _activate_shell(ctx, install)
     for linter in linters.split(","):
-        match LinterType.get(linter):
-            case LinterType.BLACK:
+        match types.LinterType.get(linter):
+            case types.LinterType.BLACK:
                 ctx.run(cmd + f"black --check {source}", pty=True)
-            case LinterType.ISORT:
+            case types.LinterType.ISORT:
                 ctx.run(cmd + f"isort --check-only {source}", pty=True)
-            case LinterType.PYDOCSTYLE:
+            case types.LinterType.PYDOCSTYLE:
                 ctx.run(cmd + f"pydocstyle {source}", pty=True)
-            case LinterType.FLAKE8:
+            case types.LinterType.FLAKE8:
                 ctx.run(cmd + f"flake8 {source}", pty=True)
-            case LinterType.MYPY:
+            case types.LinterType.MYPY:
                 ctx.run(cmd + f"mypy {source}", pty=True)
-            case LinterType.RUFF:
+            case types.LinterType.RUFF:
                 ctx.run(cmd + f"ruff check {source}")
-            case LinterType.IMPORTS:
+            case types.LinterType.IMPORTS:
                 ctx.run(cmd + "lint-imports", pty=True)
 
 
@@ -123,7 +86,7 @@ def test(
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
     if group != "":
-        tests += "/" + GroupType.get(group)
+        tests += "/" + types.GroupType.get(group)
     validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
     ctx.run(cmd + f"pytest {tests}", pty=True)
@@ -148,12 +111,12 @@ def coverage(
 def package(ctx: Context, install: str | None = None) -> None:
     """Build project wheel distribution."""
     install = install or ctx.python.install
-    match InstallType.get(install):
-        case InstallType.POETRY:
+    match types.InstallType.get(install):
+        case types.InstallType.POETRY:
             ctx.run("poetry build", pty=True)
-        case InstallType.PIPENV:
+        case types.InstallType.PIPENV:
             ctx.run("pipenv run python -m build -n", pty=True)
-        case InstallType.UV:
+        case types.InstallType.UV:
             ctx.run("uvx --from build pyproject-build --installer uv")
 
 
@@ -167,15 +130,15 @@ def release(
     install = install or ctx.python.install
     assert user is not None, "Missing remote PyPi registry user."
     assert token is not None, "Missing remote PyPi registry token."
-    match InstallType.get(install):
-        case InstallType.POETRY:
+    match types.InstallType.get(install):
+        case types.InstallType.POETRY:
             ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)
-        case InstallType.PIPENV:
+        case types.InstallType.PIPENV:
             ctx.run(f"pipenv run twine upload dist/* -u {user} -p {token}", pty=True)
-        case InstallType.UV:
+        case types.InstallType.UV:
             ctx.run(f"uvx twine upload dist/* -u {user} -p {token}")
 
 
 def _activate_shell(ctx: Context, install: str | None) -> str:
     install = install or ctx.python.install
-    return f"{InstallType.get(install)} run "
+    return f"{types.InstallType.get(install)} run "
