@@ -26,7 +26,7 @@ class TestHelmLogin:
         ],
     )
     def test_raise_error_if_no_chartmuseum_secrets(self, url, token, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             helm.login(ctx, url=url, user="other_user", token=token)
 
     def test_fetch_aws_command_correctly(self, test_run, ctx):

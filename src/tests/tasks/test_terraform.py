@@ -1,6 +1,7 @@
 import pytest
 from invoke import Config, Context
 
+from noos_inv import exceptions
 from noos_inv.tasks import terraform
 
 
@@ -19,7 +20,7 @@ class TestTerraformUpdate:
         ],
     )
     def test_raise_error_if_missing_secret(self, organisation, workspace, token, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             terraform.update(ctx, organisation=organisation, workspace=workspace, token=token)
 
     def test_fetch_command_correctly(self, test_run, ctx):
@@ -50,7 +51,7 @@ class TestTerraformRun:
         ],
     )
     def test_raise_error_if_missing_secret(self, ctx, organisation, workspace, token):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             terraform.run(ctx, organisation=organisation, workspace=workspace, token=token)
 
     def test_fetch_command_correctly(self, test_run, ctx):

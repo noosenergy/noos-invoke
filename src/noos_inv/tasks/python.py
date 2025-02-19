@@ -1,6 +1,6 @@
 from invoke import Context, task
 
-from noos_inv import types, validators
+from noos_inv import exceptions, types, validators
 
 
 CONFIG = {
@@ -128,8 +128,10 @@ def release(
     user = user or ctx.python.user
     token = token or ctx.python.token
     install = install or ctx.python.install
-    assert user is not None, "Missing remote PyPi registry user."
-    assert token is not None, "Missing remote PyPi registry token."
+    if user is None:
+        raise exceptions.UndefinedVariable("Missing remote PyPi registry user")
+    if token is None:
+        raise exceptions.UndefinedVariable("Missing remote PyPi registry token")
     match types.InstallType.get(install):
         case types.InstallType.POETRY:
             ctx.run(f"poetry publish --build -u {user} -p {token}", pty=True)

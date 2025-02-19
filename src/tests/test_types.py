@@ -1,6 +1,6 @@
 import pytest
 
-from noos_inv import types
+from noos_inv import exceptions, types
 
 
 @pytest.mark.parametrize(
@@ -14,7 +14,7 @@ from noos_inv import types
 )
 class TestValidatedEnum:
     def test_raise_error_for_unknown_install(self, enum_class):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             enum_class.get("bad_install")
 
     def test_retrieve_registered_install_correctly(self, enum_class):

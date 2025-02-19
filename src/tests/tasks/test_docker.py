@@ -26,11 +26,11 @@ def image_file(tmp_path) -> Generator[str, None, None]:
 
 class TestDockerLogin:
     def test_raise_error_if_no_aws_repo(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.login(ctx, user="AWS")
 
     def test_raise_error_if_no_dockerhub_token(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.login(ctx, user="other_user")
 
     def test_fetch_aws_command_correctly(self, test_run, ctx):
@@ -57,7 +57,7 @@ class TestDockerBuild:
             docker.build(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.build(ctx, context=image_context, arg="BAD_VARIABLE")
 
     def test_fetch_command_correctly(self, test_run, ctx, image_context, image_file):
@@ -95,7 +95,7 @@ class TestDockerBuildx:
             docker.buildx(ctx, context="bad_context")
 
     def test_raise_error_for_missing_environment_variable(self, ctx, image_context, image_file):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             docker.buildx(ctx, context=image_context, arg="BAD_VARIABLE")
 
     @pytest.mark.parametrize("image_platfom", ["linux/arm64", "linux/arm64,linux/amd64"])

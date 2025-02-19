@@ -1,6 +1,8 @@
 from enum import StrEnum, auto
 from typing import NotRequired, TypedDict
 
+from noos_inv import exceptions
+
 
 class PodConfig(TypedDict):
     podNamespace: str
@@ -18,7 +20,8 @@ class ValidatedEnum(StrEnum):
 
     @classmethod
     def get(cls, value: str) -> StrEnum:
-        assert value in cls, f"Unknown {cls.__name__} {value}."
+        if value not in cls:
+            raise exceptions.UndefinedVariable(f"Unknown {cls.__name__} {value}")
         return cls(value)
 
 

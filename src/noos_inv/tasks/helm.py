@@ -1,6 +1,6 @@
 from invoke import Context, task
 
-from noos_inv import types, validators
+from noos_inv import exceptions, types, validators
 
 
 CONFIG = {
@@ -55,8 +55,10 @@ def _cm_login(
 ) -> None:
     url = url or ctx.helm.url
     token = token or ctx.helm.token
-    assert url is not None, "Missing remote Helm registry url."
-    assert token is not None, "Missing remote Helm registry token."
+    if url is None:
+        raise exceptions.UndefinedVariable("Missing remote Helm registry url")
+    if token is None:
+        raise exceptions.UndefinedVariable("Missing remote Helm registry token")
     ctx.run(f"helm repo add {repo} {url} --username {user} --password {token}")
 
 

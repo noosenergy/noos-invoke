@@ -73,7 +73,7 @@ class TestDotEnv:
 
 class TestPorts:
     def test_raise_error_if_missing_config(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             local.ports(ctx)
 
     def test_raise_error_if_unknown_config(self, tmp_path, ctx):
@@ -91,7 +91,7 @@ class TestPorts:
 
     @pytest.mark.parametrize("unforward", [False, True])
     def test_raise_error_if_missing_pod(self, mocker, ctx, config, unforward):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             local.ports(ctx, config=config, pod="test", unforward=unforward)
 
     @pytest.mark.parametrize("unforward", [False, True])

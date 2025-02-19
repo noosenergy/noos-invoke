@@ -23,7 +23,7 @@ class TestPythonFormat:
             python.format(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_formatter_type(self, ctx, source):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.format(ctx, source=source, formatters="bad_formatter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -41,7 +41,7 @@ class TestPythonLint:
             python.lint(ctx, source="bad_src")
 
     def test_raise_error_if_unknown_linter_type(self, ctx, source):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.lint(ctx, source=source, linters="bad_linter")
 
     def test_fetch_command_correctly(self, test_run, ctx, source):
@@ -55,7 +55,7 @@ class TestPythonLint:
 
 class TestPythonTest:
     def test_raise_error_if_incorrect_group(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.test(ctx, group="bad_group")
 
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
@@ -75,7 +75,7 @@ class TestPythonTest:
 
 class TestPythonPackage:
     def test_raise_error_if_unknown_install_type(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.package(ctx, install="bad_install")
 
     @pytest.mark.parametrize(
@@ -103,11 +103,11 @@ class TestPythonRelease:
         ],
     )
     def test_raise_error_if_missing_secret(self, user, token, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.release(ctx, user=user, token=token)
 
     def test_raise_error_if_unknown_install_type(self, ctx):
-        with pytest.raises(AssertionError):
+        with pytest.raises(exceptions.UndefinedVariable):
             python.release(ctx, user="test_user", token="test_token", install="bad_install")
 
     @pytest.mark.parametrize(

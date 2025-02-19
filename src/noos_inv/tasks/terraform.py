@@ -1,5 +1,7 @@
 from invoke import Context, task
 
+from noos_inv import exceptions
+
 
 CONFIG = {
     "terraform": {
@@ -47,7 +49,8 @@ def _append_credentials(
     for arg in ctx.terraform:
         # Check credentials
         secret = locals()[arg] or ctx.terraform[arg]
-        assert secret is not None, f"Missing Terraform Cloud {arg}."
+        if secret is None:
+            raise exceptions.UndefinedVariable(f"Missing Terraform Cloud variable {arg}")
         # Return credentials args
         cmd += f" --{arg} {secret}"
     return cmd

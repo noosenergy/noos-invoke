@@ -53,7 +53,8 @@ def ports(
 ) -> None:
     """Forward ports for defined Kubernetes pods."""
     config = config or ctx.local.config
-    assert config is not None, "Missing local config file."
+    if config is None:
+        raise exceptions.UndefinedVariable("Missing local config file")
     # Load config file
     validators.check_path(config)
     with pathlib.Path(config).open(mode="rt") as f:
@@ -64,7 +65,8 @@ def ports(
     if pod is None:
         tmp_config = local_config
     else:
-        assert pod in local_config, "Missing pod in config file."
+        if pod not in local_config:
+            raise exceptions.UndefinedVariable("Missing pod in config file")
         tmp_config = {pod: local_config[pod]}
     # Iterate over targeted services
     filtered_pods = _filter_pods(ctx, tmp_config)

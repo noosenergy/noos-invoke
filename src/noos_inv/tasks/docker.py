@@ -2,7 +2,7 @@ import os
 
 from invoke import Context, task
 
-from noos_inv import types, validators
+from noos_inv import exceptions, types, validators
 
 
 CONFIG = {
@@ -41,7 +41,8 @@ def login(
 
 def _aws_login(ctx: Context, repo: str | None) -> None:
     repo = repo or ctx.docker.repo
-    assert repo is not None, "Missing remote AWS ECR URL."
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote AWS ECR URL")
     cmd = "aws ecr get-login-password | "
     cmd += f"docker login --username AWS --password-stdin {repo}"
     ctx.run(cmd)
@@ -49,7 +50,8 @@ def _aws_login(ctx: Context, repo: str | None) -> None:
 
 def _dockerhub_login(ctx: Context, user: str, token: str | None) -> None:
     token = token or ctx.docker.token
-    assert token is not None, "Missing remote Dockerhub token."
+    if token is None:
+        raise exceptions.UndefinedVariable("Missing remote Dockerhub token")
     ctx.run(f"docker login --username {user} --password {token}")
 
 
@@ -149,6 +151,7 @@ def _get_build_arg_fragment(ctx: Context, arg: str | None) -> str:
     arg = arg or ctx.docker.arg
     cmd = ""
     if arg is not None:
-        assert arg in os.environ, f"Missing environment variable {arg}."
+        if arg not in os.environ:
+            raise exceptions.UndefinedVariable(f"Missing environment variable {arg}")
         cmd += f"--build-arg {arg}={os.environ[arg]} "
     return cmd
