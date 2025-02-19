@@ -30,7 +30,7 @@ classifiers = [
 ]
 
 [tool.poetry.scripts]
-noosinv = "noos_inv:main.run"
+noosinv = "noos_inv.__main__:main"
 
 [tool.poetry.dependencies]
 python = "^3.12"
