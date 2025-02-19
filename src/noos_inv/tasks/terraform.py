@@ -1,4 +1,4 @@
-from invoke import Collection, Context, task
+from invoke import Context, task
 
 
 CONFIG = {
@@ -51,9 +51,3 @@ def _append_credentials(
         # Return credentials args
         cmd += f" --{arg} {secret}"
     return cmd
-
-
-ns = Collection("terraform")
-ns.configure(CONFIG)
-ns.add_task(update)
-ns.add_task(run)

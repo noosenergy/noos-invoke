@@ -1,8 +1,8 @@
 from enum import StrEnum, auto
 
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import utils
 
 
 CONFIG = {
@@ -179,14 +179,3 @@ def release(
 def _activate_shell(ctx: Context, install: str | None) -> str:
     install = install or ctx.python.install
     return f"{InstallType.get(install)} run "
-
-
-ns = Collection("python")
-ns.configure(CONFIG)
-ns.add_task(clean)
-ns.add_task(format)
-ns.add_task(lint)
-ns.add_task(test)
-ns.add_task(coverage)
-ns.add_task(package)
-ns.add_task(release)

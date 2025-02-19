@@ -1,6 +1,6 @@
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import utils
 
 
 CONFIG = {
@@ -137,12 +137,3 @@ def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
     ctx.run(f"helm dependency update {chart}")
     if not dry_run:
         ctx.run(f"helm cm-push {chart} {repo}")
-
-
-ns = Collection("helm")
-ns.configure(CONFIG)
-ns.add_task(login)
-ns.add_task(install)
-ns.add_task(lint)
-ns.add_task(test)
-ns.add_task(push)

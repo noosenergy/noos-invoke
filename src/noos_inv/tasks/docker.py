@@ -1,8 +1,8 @@
 import os
 
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import utils
 
 
 CONFIG = {
@@ -152,12 +152,3 @@ def _get_build_arg_fragment(ctx: Context, arg: str | None) -> str:
         assert arg in os.environ, f"Missing environment variable {arg}."
         cmd += f"--build-arg {arg}={os.environ[arg]} "
     return cmd
-
-
-ns = Collection("docker")
-ns.configure(CONFIG)
-ns.add_task(login)
-ns.add_task(configure)
-ns.add_task(build)
-ns.add_task(buildx)
-ns.add_task(push)

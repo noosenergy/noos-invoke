@@ -3,7 +3,8 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import python, utils
+from noos_inv import utils
+from noos_inv.tasks import python
 
 
 @pytest.fixture

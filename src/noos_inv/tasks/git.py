@@ -1,4 +1,4 @@
-from invoke import Collection, Context, task
+from invoke import Context, task
 
 
 CONFIG = {
@@ -16,8 +16,3 @@ def config(ctx: Context, token: str | None = None) -> None:
     ctx.run("git config --global --unset url.ssh://git@github.com.insteadof")
     ctx.run(f"echo https://{token}:@github.com > ~/.git-credentials")
     ctx.run("git config --global credential.helper store")
-
-
-ns = Collection("git")
-ns.configure(CONFIG)
-ns.add_task(config)

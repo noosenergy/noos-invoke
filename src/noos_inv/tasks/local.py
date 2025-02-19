@@ -2,9 +2,9 @@ import json
 import logging
 import pathlib
 
-from invoke import Collection, Context, task
+from invoke import Context, task
 
-from . import utils
+from noos_inv import utils
 
 
 logger = logging.getLogger(__name__)
@@ -146,9 +146,3 @@ def _unforward(ctx: Context, config: utils.PodConfig) -> None:
         if result.stdout != "":
             logger.warning(f"Killing port-forward at :{config['localPort']}")
             ctx.run(f"kill -9 {result.stdout.rstrip()}", warn=True, hide=True)
-
-
-ns = Collection("local")
-ns.configure(CONFIG)
-ns.add_task(dotenv)
-ns.add_task(ports)
