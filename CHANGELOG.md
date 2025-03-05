@@ -134,3 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - Add docker.pull as a convience and symmetry command to docker.push.
 ### Changed
  - Refactor entire repositories into modular composable components.
+
+## [0.2.4] - 2025-03-05
+### Changed
+ - docker.configure now registers QEMU for multi-platform builds.
