@@ -58,6 +58,9 @@ def _dockerhub_login(ctx: Context, user: str, token: str | None) -> None:
 @task()
 def configure(ctx: Context, builder: str = "multi-platform-builder") -> None:
     """Create and provision buildx builder for multi-platform."""
+    # Register QEMU with the kernel so that Docker can emulate other architectures.
+    ctx.run("docker run --rm --privileged multiarch/qemu-user-static --reset -p yes")
+    # Create and use the buildx builder
     ctx.run(f"docker buildx create --name {builder} --use")
     ctx.run("docker buildx inspect --bootstrap")
 
