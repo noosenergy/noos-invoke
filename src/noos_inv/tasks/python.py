@@ -5,7 +5,7 @@ from noos_inv import exceptions, types, validators
 
 CONFIG = {
     "python": {
-        "install": "pipenv",
+        "install": "uv",
         "source": "./src",
         "formatters": "ruff",
         "linters": "ruff,mypy",
