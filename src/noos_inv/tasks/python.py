@@ -95,7 +95,7 @@ def test(
     cmd = _activate_shell(ctx, install)
     pytest_cmd = "pytest"
     if num_workers > 1:
-        pytest_cmd += f" --numprocesses={num_workers}"
+        pytest_cmd += f" --numprocesses={num_workers} {tests}"
     ctx.run(cmd + pytest_cmd, pty=True)
 
 
