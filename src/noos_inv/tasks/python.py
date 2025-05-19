@@ -93,7 +93,9 @@ def test(
         tests += "/" + types.GroupType.get(group)
     validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
-    pytest_cmd = f"pytest --numprocesses={num_workers}"
+    pytest_cmd = "pytest"
+    if num_workers > 1:
+        pytest_cmd += f" --numprocesses={num_workers}"
     ctx.run(cmd + pytest_cmd, pty=True)
 
 
