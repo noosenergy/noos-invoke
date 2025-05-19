@@ -81,7 +81,11 @@ def lint(
 
 @task()
 def test(
-    ctx: Context, tests: str | None = None, group: str = "", install: str | None = None
+        ctx: Context,
+        tests: str | None = None,
+        group: str = "",
+        install: str | None = None,
+        num_workers: int = 8,
 ) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
@@ -89,7 +93,8 @@ def test(
         tests += "/" + types.GroupType.get(group)
     validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
-    ctx.run(cmd + f"pytest {tests}", pty=True)
+    pytest_cmd = f"pytest --numprocesses={num_workers}"
+    ctx.run(cmd + pytest_cmd, pty=True)
 
 
 @task()
