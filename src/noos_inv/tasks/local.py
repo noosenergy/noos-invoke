@@ -20,6 +20,31 @@ CONFIG = {
 
 # Local development workflow
 
+@task(help={
+    "command": "Parameter to provide the template e.g. django-cadmin or isodate",
+    "param_name": "Name of the template parameter e.g. command or isodate",
+    "namespace": "Argo namespace to use",
+    "template": "Template name to use e.g. gateway-worker-template"
+})
+def argo_submit(
+    ctx: Context,
+    command: str = "",
+    namespace: str = "noos-core",
+    template: str = "gateway-worker-template",
+    param_name: str = "command",
+):
+    if command is None:
+        raise exceptions.UndefinedVariable("Missing command")
+    template_path = f"wftmpl/{template}"
+    template_cmd = f"{param_name}={command}"
+    base_cmd = "ARGO_SECURE=false argo -s localhost:2746 submit"
+    cmd = f'{base_cmd} -n {namespace} --from {template_path} -p "{template_cmd}"'
+    try:
+        ctx.run(cmd)
+    except Exception as e:
+        logger.error("Make sure that the port forward to the argo server is running.")
+        logger.error("Install argo CLI via https://argo-workflows.readthedocs.io/en/latest/walk-through/argo-cli/")
+        raise e
 
 @task(help={"force": "Whether to destroy the existing file first"})
 def dotenv(
