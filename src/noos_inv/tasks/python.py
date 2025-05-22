@@ -12,6 +12,7 @@ CONFIG = {
         "tests": "./src/tests",
         "user": None,
         "token": None,
+        "numprocesses": 8,
     }
 }
 
@@ -81,15 +82,24 @@ def lint(
 
 @task()
 def test(
-    ctx: Context, tests: str | None = None, group: str = "", install: str | None = None
+        ctx: Context,
+        tests: str | None = None,
+        group: str = "",
+        install: str | None = None,
+        numprocesses: int = 0,
 ) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
+    numprocesses = numprocesses or ctx.python.numprocesses
     if group != "":
         tests += "/" + types.GroupType.get(group)
     validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
-    ctx.run(cmd + f"pytest {tests}", pty=True)
+    pytest_cmd = "pytest"
+    if numprocesses > 1:
+        pytest_cmd += f" --numprocesses={numprocesses}"
+    pytest_cmd += f" {tests}"
+    ctx.run(cmd + pytest_cmd, pty=True)
 
 
 @task()
