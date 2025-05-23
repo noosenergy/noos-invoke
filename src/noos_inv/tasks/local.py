@@ -33,8 +33,9 @@ def argo_submit(
     template: str = "gateway-worker-template",
     param_name: str = "command",
 ):
-    if command is None:
-        raise exceptions.UndefinedVariable("Missing command")
+    """Submit an argo workflow from a template."""
+    if not command:
+        raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
     template_path = f"wftmpl/{template}"
     template_cmd = f"{param_name}={command}"
     base_cmd = "ARGO_SECURE=false argo -s localhost:2746 submit"
