@@ -21,23 +21,21 @@ CONFIG = {
 # Local development workflow
 
 @task(help={
-    "command": "Parameter to provide the template e.g. django-cadmin or isodate",
-    "param_name": "Name of the template parameter e.g. command or isodate",
-    "namespace": "Argo namespace to use",
-    "template": "Template name to use e.g. gateway-worker-template"
+    "command": "Parameter to provide the template e.g. `django-cadmin {DJANGO_CMD}`",
+    "namespace": "Argo namespace to use, defaults to `noos-core`",
+    "template": "Template name to use, defaults to `gateway-worker-template`"
 })
 def argo_submit(
     ctx: Context,
     command: str = "",
     namespace: str = "noos-core",
     template: str = "gateway-worker-template",
-    param_name: str = "command",
 ):
     """Submit an argo workflow from a template."""
     if not command:
         raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
     template_path = f"wftmpl/{template}"
-    template_cmd = f"{param_name}={command}"
+    template_cmd = f"command={command}"
     base_cmd = "ARGO_SECURE=false argo -s localhost:2746 submit"
     cmd = f'{base_cmd} -n {namespace} --from {template_path} -p "{template_cmd}"'
     try:
