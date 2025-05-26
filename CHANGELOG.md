@@ -138,3 +138,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.4] - 2025-03-05
 ### Changed
  - docker.configure now registers QEMU for multi-platform builds.
+
+## [0.2.6] - 2025-03-05
+### Changed
+ - New command local.argo-submit to submit workflows from templates in argo.
