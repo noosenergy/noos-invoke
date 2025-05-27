@@ -66,7 +66,7 @@ class TestPythonTest:
     @pytest.mark.parametrize("group", ["unit", "integration", "functional"])
     def test_fetch_command_correctly(self, tmp_path, test_run, ctx, group):
         (tmp_path / group).mkdir()
-        cmd = f"pipenv run pytest --numprocesses=8 {tmp_path / group}"
+        cmd = f"pipenv run pytest {tmp_path / group}"
 
         python.test(ctx, tests=tmp_path.as_posix(), group=group, install="pipenv")
 
