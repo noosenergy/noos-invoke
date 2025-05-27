@@ -12,7 +12,7 @@ CONFIG = {
         "tests": "./src/tests",
         "user": None,
         "token": None,
-        "numprocesses": 8,
+        "numprocesses": 1,
     }
 }
 
@@ -86,7 +86,7 @@ def test(
         tests: str | None = None,
         group: str = "",
         install: str | None = None,
-        numprocesses: int = 0,
+        numprocesses: int = 1,
 ) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
