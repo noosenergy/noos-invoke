@@ -12,7 +12,7 @@ CONFIG = {
         "tests": "./src/tests",
         "user": None,
         "token": None,
-        "numprocesses": 8,
+        "pytest_args": "",
     }
 }
 
@@ -86,19 +86,16 @@ def test(
         tests: str | None = None,
         group: str = "",
         install: str | None = None,
-        numprocesses: int = 0,
+        pytest_args: str = "",
 ) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
-    numprocesses = numprocesses or ctx.python.numprocesses
+    pytest_args = pytest_args or ctx.python.pytest_args
     if group != "":
         tests += "/" + types.GroupType.get(group)
     validators.check_path(tests)
     cmd = _activate_shell(ctx, install)
-    pytest_cmd = "pytest"
-    if numprocesses > 1:
-        pytest_cmd += f" --numprocesses={numprocesses}"
-    pytest_cmd += f" {tests}"
+    pytest_cmd = f"pytest {pytest_args} {tests}"
     ctx.run(cmd + pytest_cmd, pty=True)
 
 
