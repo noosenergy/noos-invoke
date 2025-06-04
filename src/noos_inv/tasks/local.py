@@ -45,6 +45,18 @@ def argo_submit(
         logger.error("Install argo CLI via https://argo-workflows.readthedocs.io/en/latest/walk-through/argo-cli/")
         raise e
 
+
+@task(help={
+    "path": "File or directory to lint.",
+})
+def argo_lint(
+    ctx: Context,
+    path: str,
+):
+    """Lint an argo file or directory."""
+    ctx.run(f"argo lint {path}")
+
+
 @task(help={"force": "Whether to destroy the existing file first"})
 def dotenv(
     ctx: Context,
