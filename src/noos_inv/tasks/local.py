@@ -54,7 +54,11 @@ def argo_lint(
     path: str,
 ):
     """Lint an argo file or directory."""
-    ctx.run(f"argo lint {path}")
+    try:
+        ctx.run(f"argo lint {path}")
+    except Exception as e:
+        logger.error("Install argo CLI via https://argo-workflows.readthedocs.io/en/latest/walk-through/argo-cli/")
+        logger.error("Make sure that you are using the right kubernetes context `kubectl use-context noos-prod`")
 
 
 @task(help={"force": "Whether to destroy the existing file first"})
