@@ -6,10 +6,11 @@ from noos_inv import exceptions
 
 class PodConfig(TypedDict):
     podNamespace: str
-    podPrefix: str
     podPort: int
     localPort: int
     localAddress: NotRequired[str]
+    podPrefix: NotRequired[str]
+    serviceName: NotRequired[str]
 
 
 type PodsConfig = dict[str, PodConfig]

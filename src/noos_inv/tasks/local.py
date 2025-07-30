@@ -46,17 +46,6 @@ def argo_submit(
         raise e
 
 
-@task(help={
-    "path": "File or directory to lint.",
-})
-def argo_lint(
-    ctx: Context,
-    path: str,
-):
-    """Lint an argo file or directory."""
-    ctx.run(f"argo lint {path}")
-
-
 @task(help={"force": "Whether to destroy the existing file first"})
 def dotenv(
     ctx: Context,
@@ -126,15 +115,18 @@ def _filter_pods(ctx: Context, config: types.PodsConfig) -> dict[str, str]:
     # Build data struct {service: pod_name}
     selected_pods: dict[str, str] = {}
     for pod, pod_config in config.items():
-        cmd = cmd_tpl.format(
-            namespace=pod_config["podNamespace"],
-            prefix=pod_config["podPrefix"],
-        )
-        result = ctx.run(cmd, hide=True)
-        if result is None:
-            logger.error(f"Failed to fetch pod name for {pod}. Skip!")
-            continue
-        selected_pods[pod] = result.stdout.rstrip()
+        if prefix := pod_config.get("podPrefix", ""):
+            cmd = cmd_tpl.format(
+                namespace=pod_config["podNamespace"],
+                prefix=prefix,
+            )
+            result = ctx.run(cmd, hide=True)
+            if result is None:
+                logger.error(f"Failed to fetch pod name for {pod}. Skip!")
+                continue
+            selected_pods[pod] = result.stdout.rstrip()
+        else:
+            selected_pods[pod] = f"svc/{pod_config['serviceName']}"
     # Return selected pod names for each service
     return selected_pods
 
