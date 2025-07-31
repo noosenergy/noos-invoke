@@ -35,6 +35,12 @@ def pods_config() -> types.PodsConfig:
             "podPort": 80,
             "localPort": 8000,
         },
+        "test3": {
+            "podNamespace": "default",
+            "serviceName": "web",
+            "podPort": 80,
+            "localPort": 8000,
+        },
     }
 
 
@@ -95,7 +101,7 @@ class TestPorts:
             local.ports(ctx, config=config, pod="test", unforward=unforward)
 
     @pytest.mark.parametrize("unforward", [False, True])
-    @pytest.mark.parametrize("pod", [None, "test1", "test2"])
+    @pytest.mark.parametrize("pod", [None, "test1", "test2", "test3"])
     def test_execute_correct_kubectl_commands(
         self, mocker, ctx, pods_config, filtered_pods, config, pod, unforward
     ):
