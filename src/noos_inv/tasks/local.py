@@ -159,10 +159,12 @@ def _forward(ctx: Context, config: types.PodConfig, pod_name: str) -> None:
 
 def _unforward(ctx: Context, config: types.PodConfig) -> None:
     """Unforward port matching configuration."""
+    target_name = (config["podPrefix"] + ".*" if config.get("podPrefix")
+                   else f'svc/{config["serviceName"]}')
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(
         namespace=config["podNamespace"],
-        name=config["podPrefix"] + ".*",
+        name=target_name,
         port=config["podPort"],
         local_port=config["localPort"],
     )

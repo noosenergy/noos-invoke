@@ -143,6 +143,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - New command local.argo-submit to submit workflows from templates in argo.
 
- ## [0.2.8] - 2025-07-05
+## [0.2.8] - 2025-07-30
 ### Changed
  - Adding `serviceName` key to the local.ports configuration to port forward a service.
+
+## [0.2.9] - 2025-07-31
+### Changed
+ - Fix local.ports -u option not unforwarding when using serviceName
