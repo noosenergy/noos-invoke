@@ -30,14 +30,17 @@ def argo_submit(
     command: str = "",
     namespace: str = "noos-core",
     template: str = "gateway-worker-template",
+    cron: bool = False,
 ):
     """Submit an argo workflow from a template."""
-    if not command:
-        raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
-    template_path = f"wftmpl/{template}"
-    template_cmd = f"command={command}"
-    base_cmd = "ARGO_SECURE=false argo -s localhost:2746 submit"
-    cmd = f'{base_cmd} -n {namespace} --from {template_path} -p "{template_cmd}"'
+    if cron:
+        call_cmd = f"--from cronwf/{template}"
+    else:
+        if not command:
+            raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
+        call_cmd = f'--from wftmplt/{template} -p "command={command}"'
+    base_cmd = f"ARGO_SECURE=false argo -s localhost:2746 submit -n {namespace}"
+    cmd = f'{base_cmd} {call_cmd}'
     try:
         ctx.run(cmd)
     except Exception as e:
