@@ -68,8 +68,13 @@ class TestPythonTest:
         (tmp_path / group).mkdir()
         cmd = f"pipenv run pytest --numprocesses=8 {tmp_path / group}"
 
-        python.test(ctx, tests=tmp_path.as_posix(), group=group,
-            install="pipenv", pytest_args="--numprocesses=8")
+        python.test(
+            ctx,
+            tests=tmp_path.as_posix(),
+            group=group,
+            install="pipenv",
+            pytest_args="--numprocesses=8",
+        )
 
         test_run.assert_called_with(cmd, pty=True)
 

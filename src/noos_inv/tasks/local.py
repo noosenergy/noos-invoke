@@ -20,11 +20,14 @@ CONFIG = {
 
 # Local development workflow
 
-@task(help={
-    "command": "Parameter to provide the template e.g. `django-cadmin {DJANGO_CMD}`",
-    "namespace": "Argo namespace to use, defaults to `noos-core`",
-    "template": "Template name to use, defaults to `gateway-worker-template`"
-})
+
+@task(
+    help={
+        "command": "Parameter to provide the template e.g. `django-cadmin {DJANGO_CMD}`",
+        "namespace": "Argo namespace to use, defaults to `noos-core`",
+        "template": "Template name to use, defaults to `gateway-worker-template`",
+    }
+)
 def argo_submit(
     ctx: Context,
     command: str = "",
@@ -40,12 +43,14 @@ def argo_submit(
             raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
         call_cmd = f'--from wftmplt/{template} -p "command={command}"'
     base_cmd = f"ARGO_SECURE=false argo -s localhost:2746 submit -n {namespace}"
-    cmd = f'{base_cmd} {call_cmd}'
+    cmd = f"{base_cmd} {call_cmd}"
     try:
         ctx.run(cmd)
     except Exception as e:
         logger.error("Make sure that the port forward to the argo server is running.")
-        logger.error("Install argo CLI via https://argo-workflows.readthedocs.io/en/latest/walk-through/argo-cli/")
+        logger.error(
+            "Install argo CLI via https://argo-workflows.readthedocs.io/en/latest/walk-through/argo-cli/"
+        )
         raise e
 
 
@@ -162,8 +167,9 @@ def _forward(ctx: Context, config: types.PodConfig, pod_name: str) -> None:
 
 def _unforward(ctx: Context, config: types.PodConfig) -> None:
     """Unforward port matching configuration."""
-    target_name = (config["podPrefix"] + ".*" if config.get("podPrefix")
-                   else f'svc/{config["serviceName"]}')
+    target_name = (
+        config["podPrefix"] + ".*" if config.get("podPrefix") else f"svc/{config['serviceName']}"
+    )
     # Build kubectl port-forward command
     cmd = _get_kubectl_command(
         namespace=config["podNamespace"],

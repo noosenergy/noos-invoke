@@ -76,17 +76,18 @@ def lint(
                 ctx.run(cmd + f"mypy {source}", pty=True)
             case types.LinterType.RUFF:
                 ctx.run(cmd + f"ruff check {source}")
+                ctx.run(cmd + f"ruff format --check {source}")
             case types.LinterType.IMPORTS:
                 ctx.run(cmd + "lint-imports", pty=True)
 
 
 @task()
 def test(
-        ctx: Context,
-        tests: str | None = None,
-        group: str = "",
-        install: str | None = None,
-        pytest_args: str = "",
+    ctx: Context,
+    tests: str | None = None,
+    group: str = "",
+    install: str | None = None,
+    pytest_args: str = "",
 ) -> None:
     """Run pytest with optional grouped tests."""
     tests = tests or ctx.python.tests
