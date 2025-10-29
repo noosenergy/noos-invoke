@@ -43,4 +43,4 @@ package:  ## Build project wheel distribution
 	uv build
 
 release:  ## Publish wheel distribution to PyPi
-	uv publish -u ${PYPI_USER} -p ${PYPI_TOKEN}
+	uv publish -t ${PYPI_TOKEN}
