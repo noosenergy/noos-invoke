@@ -150,3 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.9] - 2025-07-31
 ### Changed
  - Fix local.ports -u option not unforwarding when using serviceName
+
+## [0.2.10] - 2025-10-29
+### Changed
+ - Change CircleCI image to v3.12 instead of v3.12.8, droopping the patch version.
