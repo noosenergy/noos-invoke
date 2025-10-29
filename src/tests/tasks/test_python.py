@@ -89,7 +89,7 @@ class TestPythonPackage:
         [
             ("pipenv", "pipenv run python -m build -n", True),
             ("poetry", "poetry build", True),
-            ("uv", "uvx --from build pyproject-build --installer uv", False),
+            ("uv", "uv build", True),
         ],
     )
     def test_fetch_command_correctly(self, install, cmd, pty, test_run, ctx):
@@ -121,7 +121,7 @@ class TestPythonRelease:
         [
             ("pipenv", "pipenv run twine upload dist/* -u test_user -p test_token", True),
             ("poetry", "poetry publish --build -u test_user -p test_token", True),
-            ("uv", "uvx twine upload dist/* -u test_user -p test_token", False),
+            ("uv", "uv build && uv publish -t test_token", True),
         ],
     )
     def test_fetch_command_correctly(self, install, cmd, pty, test_run, ctx):
