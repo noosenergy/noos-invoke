@@ -15,32 +15,32 @@ help:  ## Display this auto-generated help message
 .PHONY: update clean format
 
 update:  ## Lock and install build dependencies
-	poetry update
+	uv sync
 
 clean:  ## Clean project from temp files / dirs
 	rm -rf build dist
 	find src -type d -name __pycache__ | xargs rm -rf
 
 format:  ## Run auto-formatting linters
-	poetry run ruff check --select I --fix src
-	poetry run ruff format src
+	uv run ruff check --select I --fix src
+	uv run ruff format src
 
 
 # Deployment
 .PHONY: install lint test package release
 
 install:  ## Install build dependencies from lock file
-	poetry install
+	uv sync
 
 lint:  ## Run python linters
-	poetry run ruff check src
-	poetry run mypy src
+	uv run ruff check src
+	uv run mypy src
 
 test:  ## Run pytest with all tests
-	poetry run pytest src/tests
+	uv run pytest src/tests
 
 package:  ## Build project wheel distribution
-	poetry build
+	uv build
 
 release:  ## Publish wheel distribution to PyPi
-	poetry publish --build -u ${PYPI_USER} -p ${PYPI_TOKEN}
+	uv publish -u ${PYPI_USER} -p ${PYPI_TOKEN}

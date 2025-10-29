@@ -18,8 +18,6 @@ executors:
   standard:
     docker:
       - image: cimg/python:3.12
-        environment:
-          POETRY_VIRTUALENVS_IN_PROJECT: true
     working_directory: "~/lib"
 
 
@@ -33,14 +31,14 @@ commands:
     steps:
       - restore_cache:
           keys:
-            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+            - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "uv.lock" }}
             - virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-
             - virtualenv-{{ .Environment.CACHE_VERSION }}-
       - run:
           name: Install Python packages
           command: make install
       - save_cache:
-          key: virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "poetry.lock" }}
+          key: virtualenv-{{ .Environment.CACHE_VERSION }}-{{ .Branch }}-{{ checksum "uv.lock" }}
           paths:
             - "./.venv"
 
