@@ -158,3 +158,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.11] - 2025-10-29
 ### Changed
  - Add support to build & publish python packages via `uv`
+
+## [0.3.0] - 2025-10-29
+### Changed
+ - Change CircleCI image to v3.12 instead of v3.12.8, droopping the patch version.
+ - Migrate from Poetry to uv for package management.

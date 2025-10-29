@@ -1,22 +1,12 @@
-[build-system]
-requires = ["poetry>=1.0.0"]
-build-backend = "poetry.masonry.api"
-
-[tool.poetry]
-# Description
+[project]
 name = "noos-inv"
-version = "0.2.11"
+version = "0.3.0"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
-license = "MIT"
-authors = ["Noos Energy <contact@noos.energy>"]
-homepage = "https://github.com/noosenergy/noos-invoke"
-# Package data
+authors = [{ name = "Noos Energy", email = "contact@noos.energy" }]
+requires-python = ">=3.12,<3.13"
 readme = "README.md"
-packages = [
-    { include = "noos_inv", from = "src" },
-]
-# Distribution
+license = "MIT"
 classifiers = [
     "Topic :: Software Development :: Build Tools",
     "Development Status :: 5 - Production/Stable",
@@ -28,25 +18,28 @@ classifiers = [
     "Programming Language :: Python :: 3.12",
     "Typing :: Typed",
 ]
+dependencies = ["invoke"]
 
-[tool.poetry.scripts]
+[project.urls]
+Homepage = "https://github.com/noosenergy/noos-invoke"
+
+[project.scripts]
 noosinv = "noos_inv.__main__:main"
 
-[tool.poetry.dependencies]
-python = "^3.12"
-invoke = "*"
+[build-system]
+requires = ["uv_build>=0.9.5,<0.10.0"]
+build-backend = "uv_build"
 
-[tool.poetry.dev-dependencies]
-# Linter
-ruff = "*"
-mypy = "*"
-# Testing
-pytest = "*"
-pytest-cov = "*"
-pytest-mock = "*"
-# Debugging
-ipdb = "*"
-ipython = "*"
+[dependency-groups]
+dev = [
+    "ruff",
+    "mypy",
+    "pytest",
+    "pytest-cov",
+    "pytest-mock",
+    "ipdb",
+    "ipython",
+]
 
 [tool.ruff]
 line-length = 99
