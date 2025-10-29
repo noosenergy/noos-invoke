@@ -4,7 +4,7 @@ version = "0.3.0"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 authors = [{ name = "Noos Energy", email = "contact@noos.energy" }]
-requires-python = "~=3.12"
+requires-python = ">=3.12,<3.13"
 readme = "README.md"
 license = "MIT"
 classifiers = [
