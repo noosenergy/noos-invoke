@@ -125,7 +125,7 @@ def package(ctx: Context, install: str | None = None) -> None:
         case types.InstallType.PIPENV:
             ctx.run("pipenv run python -m build -n", pty=True)
         case types.InstallType.UV:
-            ctx.run("uvx --from build pyproject-build --installer uv")
+            ctx.run("uv build", pty=True)
 
 
 @task()
@@ -146,7 +146,7 @@ def release(
         case types.InstallType.PIPENV:
             ctx.run(f"pipenv run twine upload dist/* -u {user} -p {token}", pty=True)
         case types.InstallType.UV:
-            ctx.run(f"uvx twine upload dist/* -u {user} -p {token}")
+            ctx.run(f"uv build && uv publish -t {token}", pty=True)
 
 
 def _activate_shell(ctx: Context, install: str | None) -> str:

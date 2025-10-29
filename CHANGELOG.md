@@ -150,3 +150,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.9] - 2025-07-31
 ### Changed
  - Fix local.ports -u option not unforwarding when using serviceName
+
+## [0.2.10] - 2025-09-12
+### Changed
+ - Use `ruff format --check` instead of just `ruff format`
+
+## [0.2.11] - 2025-10-29
+### Changed
+ - Add support to build & publish python packages via `uv`
