@@ -16,9 +16,12 @@ CONFIG = {
         "values": "./local/helm-values.yaml",
         "name": "webserver",
         "tag": "0.1.0",
+        "kubeconform_schema_locations": (
+            "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/"
+            "{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
+        ),
     }
 }
-
 
 # Helm deployment workflow:
 
@@ -71,11 +74,28 @@ def install(ctx: Context, plugins: list[str] | None = None) -> None:
 
 
 @task()
-def lint(ctx: Context, chart=None) -> None:
+def lint(
+    ctx: Context,
+    chart: str | None = None,
+    values: str | None = None,
+) -> None:
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
+    values = values or ctx.helm.values
     validators.check_path(chart)
+    validators.check_path(values)
+
+    # Running helm lint
     ctx.run(f"helm lint {chart}")
+
+    # Running kubeconform
+    print("\nValidating rendered Helm templates with kubeconform")
+    helm_cmd = f"helm template {chart} --values {values} "
+    kubeconform_cmd = (
+        "kubeconform -schema-location default "
+        f"-schema-location '{ctx.helm.kubeconform_schema_locations}'"
+    )
+    ctx.run(f"{helm_cmd} | {kubeconform_cmd}")
 
 
 @task(help={"dry-run": "Whether to render the Helm manifest first"})

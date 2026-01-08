@@ -163,3 +163,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Change CircleCI image to v3.12 instead of v3.12.8, droopping the patch version.
  - Migrate from Poetry to uv for package management.
+
+## [0.4.0] - 2026-01-08
+### Changed
+ - Add kubeconform to helm.lint command
