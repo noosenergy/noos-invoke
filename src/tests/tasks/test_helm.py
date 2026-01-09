@@ -17,6 +17,11 @@ def chart(tmp_path) -> Generator[str, None, None]:
     yield tmp_path.as_posix()
 
 
+@pytest.fixture
+def values(tmp_path) -> Generator[str, None, None]:
+    yield tmp_path.as_posix()
+
+
 class TestHelmLogin:
     @pytest.mark.parametrize(
         "url,token",
@@ -63,12 +68,13 @@ class TestHelmLint:
         with pytest.raises(exceptions.PathNotFound):
             helm.lint(ctx, chart="bad_chart")
 
-    def test_fetch_command_correctly(self, test_run, ctx, chart):
-        cmd = f"helm lint {chart}"
+    def test_fetch_command_correctly(self, test_run, ctx, chart, values):
+        cmd = f"helm template {chart} --values {values}"
 
-        helm.lint(ctx, chart=chart)
+        helm.lint(ctx, chart=chart, values=values)
 
-        test_run.assert_called_with(cmd)
+        assert test_run.call_count == 2
+        assert cmd in test_run.call_args[0][0]
 
 
 class TestHelmPush:
