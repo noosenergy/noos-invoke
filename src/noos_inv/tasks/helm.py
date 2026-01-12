@@ -17,7 +17,8 @@ CONFIG = {
         "name": "webserver",
         "tag": "0.1.0",
         "kubeconform_schema_locations": (
-            "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/"
+            "https://raw.githubusercontent.com/datreeio/CRDs-catalog/"
+            "dd6ea1a5c2d2db4abefe397d13846a338a1ca561/"  # Latest commit as of Jan 12 2025
             "{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         ),
     }
