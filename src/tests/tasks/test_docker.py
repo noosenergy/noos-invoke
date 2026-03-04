@@ -177,3 +177,74 @@ class TestDockerPush:
 
         assert test_run.call_count == 1
         test_run.assert_called_with(cmd)
+
+
+class TestDockerImagetools:
+    def test_raise_error_if_no_registry(self, ctx):
+        with pytest.raises(exceptions.UndefinedVariable):
+            docker.imagetools(ctx, image_platform_tags="1.0")
+
+    def test_fetch_command_correctly(self, test_run, ctx):
+        cmd = (
+            "docker buildx imagetools create "
+            "--tag test-repo/test-image:test "
+            "--tag test-repo/test-image:latest "
+            "test-repo/test-image:1.0"
+        )
+
+        docker.imagetools(
+            ctx, repo="test-repo", name="test-image", image_platform_tags="1.0", tag="test"
+        )
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with(cmd)
+
+    def test_multiple_image_platform_tags(self, test_run, ctx):
+        cmd = (
+            "docker buildx imagetools create "
+            "--tag test-repo/test-image:test --tag test-repo/test-image:latest "
+            "test-repo/test-image:1.0 test-repo/test-image:2.0"
+        )
+
+        docker.imagetools(
+            ctx, repo="test-repo", name="test-image", image_platform_tags="1.0,2.0", tag="test"
+        )
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with(cmd)
+
+    def test_no_image_platform_tags(self, test_run, ctx):
+        with pytest.raises(ValueError):
+            docker.imagetools(ctx, repo="test-repo", name="test-image", image_platform_tags="")
+
+    def test_tag_only(self, test_run, ctx):
+        cmd = (
+            "docker buildx imagetools create "
+            "--tag test-repo/test-image:1.0 "
+            "test-repo/test-image:1.0"
+        )
+
+        docker.imagetools(
+            ctx,
+            repo="test-repo",
+            name="test-image",
+            image_platform_tags="1.0",
+            tag="1.0",
+            tag_only=True,
+        )
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with(cmd)
+
+    def test_default_tag(self, test_run, ctx):
+        cmd = (
+            "docker buildx imagetools create "
+            "--tag test-repo/test-image:test test-repo/test-image:1.0"
+        )
+
+        docker.imagetools(
+            ctx, repo="test-repo", name="test-image", image_platform_tags="1.0", tag_only=True
+        )
+
+        assert test_run.call_count == 1
+        test_run.assert_called_with(cmd)
