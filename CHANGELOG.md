@@ -168,6 +168,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Add kubeconform to helm.lint command
 
- ## [0.4.1] - 2026-01-12
+## [0.4.1] - 2026-01-12
 ### Changed
  - Pin the CRD catalog repository
+
+## [0.5.0] - 2026-03-04
+### Changed
+ - Add the docker.imagetools subcommand to create multiu arch images
+

@@ -56,10 +56,13 @@ def _dockerhub_login(ctx: Context, user: str, token: str | None) -> None:
 
 
 @task()
-def configure(ctx: Context, builder: str = "multi-platform-builder") -> None:
+def configure(
+    ctx: Context, builder: str = "multi-platform-builder", install_qemu: bool = True
+) -> None:
     """Create and provision buildx builder for multi-platform."""
-    # Register QEMU with the kernel so that Docker can emulate other architectures.
-    ctx.run("docker run --rm --privileged multiarch/qemu-user-static --reset -p yes")
+    if install_qemu:
+        # Register QEMU with the kernel so that Docker can emulate other architectures.
+        ctx.run("docker run --rm --privileged multiarch/qemu-user-static --reset -p yes")
     # Create and use the buildx builder
     ctx.run(f"docker buildx create --name {builder} --use")
     ctx.run("docker buildx inspect --bootstrap")
@@ -163,6 +166,39 @@ def buildx(
         cmd += f"--platform {platform} --push "
         cmd += f"{context}"
         ctx.run(cmd)
+
+
+@task(
+    help={
+        "tag-only": "Whether to not tag the Docker image as latest",
+        "image-platform-tags": "Comma-separated list of image tags for docker buildx imagetools",
+        "name": "Image name (without tag)",
+        "repo": "Remote registry URL",
+        "tag": "Image tag to push (default: test)",
+    }
+)
+def imagetools(
+    ctx: Context,
+    image_platform_tags: str = "",
+    repo: str | None = None,
+    name: str | None = None,
+    tag: str | None = None,
+    tag_only: bool = False,
+) -> None:
+    """Create and push x-platform Docker image manifest to a remote registry."""
+    if not image_platform_tags:
+        raise ValueError("Missing input platform tags for docker buildx imagetools")
+    repo = repo or ctx.docker.repo
+    if repo is None:
+        raise exceptions.UndefinedVariable("Missing remote Docker registry URL")
+    tag = tag or ctx.docker.tag
+    tag_list = [tag] if tag_only else [tag, "latest"]
+    target_tags = " ".join([f"--tag {repo}/{name}:{t}" for t in tag_list])
+
+    image_platform_tags_list = image_platform_tags.split(",")
+    image_platform_tags = " ".join(f"{repo}/{name}:{t}" for t in image_platform_tags_list)
+    cmd = f"docker buildx imagetools create {target_tags} {image_platform_tags}"
+    ctx.run(cmd)
 
 
 def _get_build_context(ctx: Context, context: str | None, file: str | None) -> tuple[str, str]:

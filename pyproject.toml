@@ -1,6 +1,6 @@
 [project]
 name = "noos-inv"
-version = "0.4.1"
+version = "0.5.0"
 description = "Shared workflows across CI/CD pipelines"
 # Credentials
 authors = [{ name = "Noos Energy", email = "contact@noos.energy" }]
