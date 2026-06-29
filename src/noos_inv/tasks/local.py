@@ -41,7 +41,7 @@ def argo_submit(
     else:
         if not command:
             raise exceptions.UndefinedVariable("Missing valid -c, --command parameter")
-        call_cmd = f'--from wftmplt/{template} -p "command={command}"'
+        call_cmd = f'--from workflowtemplate/{template} -p "command={command}"'
     base_cmd = f"ARGO_SECURE=false argo -s localhost:2746 submit -n {namespace}"
     cmd = f"{base_cmd} {call_cmd}"
     try:
