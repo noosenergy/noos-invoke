@@ -1,3 +1,4 @@
+import logging
 import pathlib
 import re
 
@@ -6,10 +7,13 @@ from invoke import Context, task
 from noos_inv import exceptions, types, validators
 
 
+logger = logging.getLogger(__name__)
+
+
 CONFIG = {
     "helm": {
         # Sensitive
-        "repo": "local-repo",
+        "repo": None,
         "url": None,
         "user": "AWS",
         "token": None,
@@ -18,9 +22,9 @@ CONFIG = {
         "chart": "./helm/chart",
         "values": "./local/helm-values.yaml",
         "name": "webserver",
-        "kubeconform_schema_locations": (
+        "crd_schema": (
             "https://raw.githubusercontent.com/datreeio/CRDs-catalog/"
-            "dd6ea1a5c2d2db4abefe397d13846a338a1ca561/"  # Latest commit as of Jan 12 2025
+            "866b2653a5334db9aed20ad74701e20fd464471b/"  # Latest commit as of Sep 1 2026
             "{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         ),
     }
@@ -92,13 +96,10 @@ def lint(
     ctx.run(f"helm lint {chart}")
 
     # Running kubeconform
-    print("\nValidating rendered Helm templates with kubeconform")
-    helm_cmd = f"helm template {chart} --values {values} "
-    kubeconform_cmd = (
-        "kubeconform -schema-location default "
-        f"-schema-location '{ctx.helm.kubeconform_schema_locations}'"
-    )
-    ctx.run(f"{helm_cmd} | {kubeconform_cmd}")
+    logger.info("Validating rendered Helm templates with Kubeconform")
+    cmd = f"helm template {chart} --values {values} | "
+    cmd += f"kubeconform -schema-location default -schema-location '{ctx.helm.crd_schema}'"
+    ctx.run(cmd)
 
 
 @task(help={"dry-run": "Whether to render the Helm manifest first"})
