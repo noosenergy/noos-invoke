@@ -176,3 +176,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Add the docker.imagetools subcommand to create multiu arch images
 
+## [0.5.1] - 2026-09-01
+### Changed
+ - Ensure native version VCS management for helm.push command
