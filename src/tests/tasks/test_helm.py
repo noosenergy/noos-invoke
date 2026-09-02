@@ -14,6 +14,7 @@ def ctx() -> Context:
 
 @pytest.fixture
 def chart(tmp_path) -> Generator[str, None, None]:
+    (tmp_path / "Chart.yaml").write_text("version: 2.3.4\n")
     yield tmp_path.as_posix()
 
 
@@ -78,14 +79,31 @@ class TestHelmLint:
 
 
 class TestHelmPush:
-    def test_raise_error_if_invalid_chart(self, ctx):
-        with pytest.raises(exceptions.PathNotFound):
-            helm.push(ctx, chart="bad_chart")
+    @pytest.mark.parametrize(
+        "chart,manifest,error",
+        [
+            pytest.param("bad_chart", None, exceptions.PathNotFound, id="incorrect-folder"),
+            pytest.param(None, None, exceptions.PathNotFound, id="missing-manifest"),
+            pytest.param(
+                None,
+                "name: local/test/chart\n",
+                exceptions.UndefinedVariable,
+                id="missing-version",
+            ),
+        ],
+    )
+    def test_raise_error_if_invalid_chart(self, tmp_path, ctx, chart, manifest, error):
+        chart = chart or tmp_path.as_posix()
+        if manifest is not None:
+            (tmp_path / "Chart.yaml").write_text(manifest)
 
-    def test_fetch_aws_command_correctly(self, chart, test_run, ctx):
-        cmd = "helm push chart-latest.tgz oci://test.repo/local/test"
+        with pytest.raises(error):
+            helm.push(ctx, chart=chart, repo="test.repo")
 
-        helm.push(ctx, chart=chart, repo="test.repo", name="local/test/chart", tag="latest")
+    def test_fetch_aws_command_correctly_with_chart_version(self, test_run, ctx, chart):
+        cmd = "helm push chart-2.3.4.tgz oci://test.repo/local/test"
+
+        helm.push(ctx, chart=chart, repo="test.repo", name="local/test/chart")
 
         test_run.assert_called_with(cmd)
 

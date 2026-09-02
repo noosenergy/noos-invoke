@@ -1,12 +1,19 @@
+import logging
+import pathlib
+import re
+
 from invoke import Context, task
 
 from noos_inv import exceptions, types, validators
 
 
+logger = logging.getLogger(__name__)
+
+
 CONFIG = {
     "helm": {
         # Sensitive
-        "repo": "local-repo",
+        "repo": None,
         "url": None,
         "user": "AWS",
         "token": None,
@@ -15,10 +22,9 @@ CONFIG = {
         "chart": "./helm/chart",
         "values": "./local/helm-values.yaml",
         "name": "webserver",
-        "tag": "0.1.0",
-        "kubeconform_schema_locations": (
+        "crd_schema": (
             "https://raw.githubusercontent.com/datreeio/CRDs-catalog/"
-            "dd6ea1a5c2d2db4abefe397d13846a338a1ca561/"  # Latest commit as of Jan 12 2025
+            "866b2653a5334db9aed20ad74701e20fd464471b/"  # Latest commit as of Sep 1 2026
             "{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         ),
     }
@@ -90,13 +96,10 @@ def lint(
     ctx.run(f"helm lint {chart}")
 
     # Running kubeconform
-    print("\nValidating rendered Helm templates with kubeconform")
-    helm_cmd = f"helm template {chart} --values {values} "
-    kubeconform_cmd = (
-        "kubeconform -schema-location default "
-        f"-schema-location '{ctx.helm.kubeconform_schema_locations}'"
-    )
-    ctx.run(f"{helm_cmd} | {kubeconform_cmd}")
+    logger.info("Validating rendered Helm templates with Kubeconform")
+    cmd = f"helm template {chart} --values {values} | "
+    cmd += f"kubeconform -schema-location default -schema-location '{ctx.helm.crd_schema}'"
+    ctx.run(cmd)
 
 
 @task(help={"dry-run": "Whether to render the Helm manifest first"})
@@ -127,13 +130,13 @@ def push(
     chart: str | None = None,
     repo: str | None = None,
     name: str | None = None,
-    tag: str | None = None,
     dry_run: bool = False,
 ) -> None:
     """Push Helm chart to a remote registry (AWS ECR or Chart Museum)."""
     repo = repo or ctx.helm.repo
     chart = chart or ctx.helm.chart
-    validators.check_path(chart)
+    tag = _get_chart_version(chart)
+    ctx.run(f"helm dependency update {chart}")
     if ctx.helm.user == types.UserType.AWS:
         _aws_push(ctx, chart, repo, name, tag, dry_run)
     else:
@@ -145,18 +148,24 @@ def _aws_push(
     chart: str,
     repo: str,
     name: str | None,
-    tag: str | None,
+    tag: str,
     dry_run: bool,
 ) -> None:
     names = (name or ctx.helm.name).split("/")
-    tag = tag or ctx.helm.tag
-    ctx.run(f"helm dependency update {chart}")
     ctx.run(f"helm package {chart} --version {tag}")
     if not dry_run:
         ctx.run(f"helm push {names[-1]}-{tag}.tgz oci://{repo}/{'/'.join(names[:-1])}")
 
 
 def _cm_push(ctx: Context, chart: str, repo: str, dry_run: bool) -> None:
-    ctx.run(f"helm dependency update {chart}")
     if not dry_run:
         ctx.run(f"helm cm-push {chart} {repo}")
+
+
+def _get_chart_version(chart: str) -> str:
+    manifest = pathlib.Path(chart, "Chart.yaml")
+    validators.check_path(manifest.as_posix())
+    match = re.search(r"^version:\s*(\S+)", manifest.read_text(), re.MULTILINE)
+    if match is None:
+        raise exceptions.UndefinedVariable(f"Missing 'version' in {manifest}")
+    return match.group(1)
