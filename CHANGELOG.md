@@ -179,3 +179,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.5.1] - 2026-09-01
 ### Changed
  - Ensure native version VCS management for helm.push command
+
+## [0.5.2] - 2026-09-09
+### Changed
+ - Bump the pinned CRD catalog commit to 2026-09-08, picking up Traefik
+   `forwardAuth.maxResponseBodySize`

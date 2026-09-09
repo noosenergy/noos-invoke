@@ -24,7 +24,7 @@ CONFIG = {
         "name": "webserver",
         "crd_schema": (
             "https://raw.githubusercontent.com/datreeio/CRDs-catalog/"
-            "866b2653a5334db9aed20ad74701e20fd464471b/"  # Latest commit as of Sep 1 2026
+            "ad3b08c5045129d7bb1eeffd8e61719b2c8dd1e2/"  # Latest commit as of Sep 8 2026
             "{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         ),
     }
