@@ -21,6 +21,7 @@ CONFIG = {
         "plugins": ["https://github.com/chartmuseum/helm-push.git"],
         "chart": "./helm/chart",
         "values": "./local/helm-values.yaml",
+        "lint_values": None,
         "name": "webserver",
         "crd_schema": (
             "https://raw.githubusercontent.com/datreeio/CRDs-catalog/"
@@ -88,16 +89,19 @@ def lint(
 ) -> None:
     """Check compliance of Helm charts / values."""
     chart = chart or ctx.helm.chart
-    values = values or ctx.helm.values
+    values = values or ctx.helm.lint_values
     validators.check_path(chart)
-    validators.check_path(values)
 
     # Running helm lint
     ctx.run(f"helm lint {chart}")
 
-    # Running kubeconform
+    # Running kubeconform, against the chart's own values.yaml unless overridden
     logger.info("Validating rendered Helm templates with Kubeconform")
-    cmd = f"helm template {chart} --values {values} | "
+    cmd = f"helm template {chart}"
+    if values:
+        validators.check_path(values)
+        cmd += f" --values {values}"
+    cmd += " | "
     cmd += f"kubeconform -schema-location default -schema-location '{ctx.helm.crd_schema}'"
     ctx.run(cmd)
 
@@ -109,7 +113,7 @@ def test(
     values: str | None = None,
     release: str = "test",
     namespace: str = "default",
-    context: str = "minikube",
+    context: str = "orbstack",
     dry_run: bool = False,
 ) -> None:
     """Test local deployment in Minikube."""

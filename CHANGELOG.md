@@ -184,3 +184,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  - Bump the pinned CRD catalog commit to 2026-09-08, picking up Traefik
    `forwardAuth.maxResponseBodySize`
+ - Change the linting logic, `helm.lint` now lints against the charts' own default values
+   by default rather than the values defines in `local/helm-values.yaml`. Those are still used
+   `helm.test`.
