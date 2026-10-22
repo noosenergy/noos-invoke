@@ -63,7 +63,13 @@ select = [
     "D",
     # Isort
     "I",
+    # Flake8-no-pep420: require __init__.py in packages
+    "INP",
 ]
+
+[tool.ruff.lint.per-file-ignores]
+# pytest does not require __init__ files for discovery
+"*/tests/*.py" = ["INP"]
 
 [tool.ruff.lint.isort]
 lines-after-imports = 2
