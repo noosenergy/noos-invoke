@@ -159,6 +159,9 @@ def _forward(ctx: Context, config: types.PodConfig, pod_name: str) -> None:
         local_port=config["localPort"],
         local_address=config.get("localAddress"),
     )
+    if config.get("autoRestart"):
+        # kubectl pins a service forward to one pod: restart it when the tunnel dies
+        cmd = f"sh -c 'while true; do {cmd}; sleep 1; done'"
     # Ensure the process is detached
     cmd += " </dev/null >/dev/null 2>&1 &"
     logger.warning(f"Forwarding {config['podNamespace']}/{pod_name} to :{config['localPort']}")
@@ -184,6 +187,7 @@ def _unforward(ctx: Context, config: types.PodConfig) -> None:
     result = ctx.run(cmd, warn=True, hide=True)
     # Kill the process
     if result is not None:
-        if result.stdout != "":
+        # Possibly several PIDs (restart wrapper + kubectl): kill them in one call
+        if pids := " ".join(result.stdout.split()):
             logger.warning(f"Killing port-forward at :{config['localPort']}")
-            ctx.run(f"kill -9 {result.stdout.rstrip()}", warn=True, hide=True)
+            ctx.run(f"kill -9 {pids}", warn=True, hide=True)

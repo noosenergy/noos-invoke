@@ -4,7 +4,7 @@ from collections.abc import Generator
 import pytest
 from invoke import Config, Context
 
-from noos_inv import exceptions, types
+from noos_inv import exceptions, types, validators
 from noos_inv.tasks import local
 
 
@@ -129,3 +129,45 @@ class TestPorts:
                     (ctx, pods_config["test1"], "test1"),
                     (ctx, pods_config["test2"], "test2"),
                 ]
+
+
+class TestAutoRestart:
+    @pytest.fixture
+    def svc_config(self) -> types.PodConfig:
+        return {
+            "podNamespace": "default",
+            "serviceName": "web",
+            "podPort": 80,
+            "localPort": 8000,
+        }
+
+    def test_plain_forward_by_default(self, test_run, ctx, svc_config):
+        local._forward(ctx, svc_config, "svc/web")
+
+        cmd = test_run.call_args[0][0]
+        assert cmd.startswith("kubectl port-forward -n default svc/web 8000:80")
+        assert "while true" not in cmd
+
+    def test_auto_restart_loop_if_enabled(self, test_run, ctx, svc_config):
+        svc_config["autoRestart"] = True
+
+        local._forward(ctx, svc_config, "svc/web")
+
+        cmd = test_run.call_args[0][0]
+        assert "while true; do kubectl port-forward -n default svc/web 8000:80;" in cmd
+        assert cmd.endswith("&")
+
+    def test_unforward_kills_all_pids_at_once(self, mocker, ctx, svc_config):
+        mocked_run = mocker.patch.object(
+            Context, "run", return_value=mocker.Mock(stdout="12\n34\n")
+        )
+
+        local._unforward(ctx, svc_config)
+
+        assert mocked_run.call_args[0][0] == "kill -9 12 34"
+
+    def test_autorestart_requires_service(self):
+        cfg = {"a": {"podNamespace": "d", "podPrefix": "p-", "podPort": 1, "localPort": 2,
+                     "autoRestart": True}}
+        with pytest.raises(exceptions.InvalidConfig):
+            validators.check_config(cfg)
