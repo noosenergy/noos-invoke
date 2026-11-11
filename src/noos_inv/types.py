@@ -11,6 +11,7 @@ class PodConfig(TypedDict):
     localAddress: NotRequired[str]
     podPrefix: NotRequired[str]
     serviceName: NotRequired[str]
+    autoRestart: NotRequired[bool]
 
 
 type PodsConfig = dict[str, PodConfig]

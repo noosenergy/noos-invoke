@@ -21,3 +21,8 @@ def check_config(config: object) -> None:
             raise exceptions.InvalidConfig("Configuration element must be a mapping")
         if not (types.PodConfig.__required_keys__ <= set(item.keys())):
             raise exceptions.InvalidConfig("Invalid configuration element keys")
+        if "autoRestart" in item:
+            if not isinstance(item["autoRestart"], bool):
+                raise exceptions.InvalidConfig("autoRestart must be a boolean")
+            if item["autoRestart"] and "serviceName" not in item:
+                raise exceptions.InvalidConfig("autoRestart requires serviceName")
